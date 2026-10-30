@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "PlayHub - Apps & Games Center ",
+  "short_name": "PlayHub",
+  "version": "2.0",
+  "description": "A central hub for quick access to games, movies, AI, web editors, and open-source tools.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "action": {
+    "default_title": "Abrir PlayHub",
+    "default_icon": "icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "16x16 32x32 48x48 128x128 192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

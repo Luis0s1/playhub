@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <!-- Sem maximum-scale/user-scalable: o zoom do usuário fica liberado (acessibilidade) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="description" content="PlayHub: central de links de apps, jogos, filmes, IAs e ferramentas.">
+    <title>PlayHub - Central de Apps &amp; Jogos</title>
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PlayHub">
+
+    <link rel="stylesheet" href="style.css">
+    <script src="boot.js"></script>
+</head>
+<body class="system-mode">
+
+    <!-- ============ Barra lateral (computador) ============ -->
+    <nav id="sidebar" class="sidebar glass" aria-label="PlayHub">
+        <div class="sidebar-top">
+            <button class="sidebar-brand" id="brand-toggle" type="button">
+                <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 100 100"><polygon points="56,8 24,54 46,54 40,92 76,42 53,42"/></svg></span>
+                <span class="brand-name">PlayHub</span>
+            </button>
+
+            <button id="btn-nav-home" class="nav-btn filter-btn active" data-cat="todos" type="button">
+                <span class="icon" aria-hidden="true">🏠</span>
+                <span class="nav-label" data-i18n="inicio">Início</span>
+            </button>
+
+            <button id="btn-nav-criados" class="nav-btn filter-btn" data-cat="criados" type="button">
+                <span class="icon" aria-hidden="true">🗃</span>
+                <span class="nav-label" data-i18n="criados">Criados</span>
+            </button>
+
+            <button id="btn-nav-favs" class="nav-btn filter-btn" data-cat="favoritos" type="button">
+                <span class="icon" aria-hidden="true">⭐</span>
+                <span class="nav-label" data-i18n="favoritos">Favoritos</span>
+            </button>
+
+            <button id="btn-open-create" class="nav-btn nav-btn-add" type="button">
+                <span class="icon" aria-hidden="true">➕</span>
+                <span class="nav-label" data-i18n="criar_botao">Criar Link</span>
+            </button>
+
+            <button id="btn-multi-select" class="nav-btn" type="button">
+                <span class="icon" aria-hidden="true">☑️</span>
+                <span class="nav-label" data-i18n="selecionar_varios">Selecionar Vários</span>
+            </button>
+
+            <button id="btn-open-settings" class="nav-btn" type="button">
+                <span class="icon" aria-hidden="true">⚙️</span>
+                <span class="nav-label" data-i18n="configuracoes">Ajustes</span>
+            </button>
+
+            <button id="btn-device-info" class="nav-btn" type="button">
+                <span class="icon" aria-hidden="true">💻</span>
+                <span class="nav-label" data-i18n="info_aparelho">Info Aparelho</span>
+            </button>
+
+            <div class="sidebar-divider"></div>
+
+            <div id="dynamic-categories" class="categories-container"></div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="credits-box">
+                <a href="https://linktr.ee/Luis0s1" target="_blank" rel="noopener">🔗 Luis0s1</a>
+                <a href="https://linktr.ee/Luis__0s1" target="_blank" rel="noopener">🔗 Luis__0s1</a>
+                <a href="https://www.youtube.com/@luis_0s1" target="_blank" rel="noopener">▶ YouTube</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============ Área principal ============ -->
+    <main id="main-content" class="main-content">
+        <header class="header glass" id="app-header">
+            <div class="header-brand">
+                <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 100 100"><polygon points="56,8 24,54 46,54 40,92 76,42 53,42"/></svg></span>
+                <h1>PlayHub</h1>
+            </div>
+
+            <div class="header-search" id="header-search" role="search">
+                <span class="search-ico" aria-hidden="true">🔎</span>
+                <input type="search" id="search-input" autocomplete="off" spellcheck="false"
+                       placeholder="Pesquisar site..." data-i18n-ph="pesquisar" data-i18n-aria="pesquisar">
+                <button id="btn-search-close" class="icon-btn mobile-only" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+            </div>
+
+            <div id="normal-header-actions" class="header-actions">
+                <button id="btn-search-open" class="icon-btn mobile-only" type="button" data-i18n-aria="pesquisar" aria-label="Pesquisar">🔎</button>
+                <button id="btn-install-top" class="btn-theme-pill install-btn hidden" type="button">
+                    <span aria-hidden="true">⬇️</span> <span data-i18n="instalar_app">Instalar app</span>
+                </button>
+                <select id="lang-selector" class="btn-theme-pill" data-i18n-aria="idioma" aria-label="Idioma"></select>
+                <button id="theme-toggle" class="icon-btn" type="button" data-i18n-aria="tema" aria-label="Tema">🌙</button>
+                <button id="btn-settings-top" class="icon-btn mobile-only" type="button" data-i18n-aria="configuracoes" aria-label="Ajustes">⚙️</button>
+            </div>
+
+            <div id="selection-header-actions" class="header-actions hidden">
+                <span id="selection-count-label" class="selection-count">0</span>
+                <button id="btn-sel-fav" class="btn-theme-pill" type="button"><span aria-hidden="true">⭐</span> <span data-i18n="favoritar">Favoritar</span></button>
+                <button id="btn-sel-del" class="btn-theme-pill danger" type="button"><span aria-hidden="true">🗑️</span> <span data-i18n="apagar_ocultar">Apagar/Ocultar</span></button>
+                <button id="btn-sel-cancel" class="btn-theme-pill" type="button"><span aria-hidden="true">✖</span> <span data-i18n="cancelar">Cancelar</span></button>
+            </div>
+        </header>
+
+        <div id="grid-container" class="grid-container"></div>
+
+        <footer class="footer-credits">
+            <p>⚡ PlayHub | <span data-i18n="direitos">Todos os direitos reservados</span></p>
+        </footer>
+    </main>
+
+    <!-- ============ Navegação de baixo (celular) ============ -->
+    <nav id="bottom-nav" class="bottom-nav glass" aria-label="PlayHub">
+        <button class="bn-btn filter-btn active" data-cat="todos" type="button">
+            <span class="bn-ico" aria-hidden="true">🏠</span><span class="bn-label" data-i18n="inicio">Início</span>
+        </button>
+        <button class="bn-btn filter-btn" data-cat="criados" type="button">
+            <span class="bn-ico" aria-hidden="true">🗃</span><span class="bn-label" data-i18n="criados">Criados</span>
+        </button>
+        <button class="bn-btn filter-btn" data-cat="favoritos" type="button">
+            <span class="bn-ico" aria-hidden="true">⭐</span><span class="bn-label" data-i18n="favoritos">Favoritos</span>
+        </button>
+        <button id="bn-create" class="bn-btn bn-create" type="button">
+            <span class="bn-ico" aria-hidden="true">➕</span><span class="bn-label" data-i18n="criar">Criar</span>
+        </button>
+        <button id="bn-menu" class="bn-btn" type="button" aria-haspopup="dialog">
+            <span class="bn-ico" aria-hidden="true">☰</span><span class="bn-label" data-i18n="menu">Menu</span>
+        </button>
+    </nav>
+
+    <!-- ============ Menu inicial do celular (folha de baixo) ============ -->
+    <div id="mobile-menu" class="sheet glass hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title">
+        <div class="sheet-handle" aria-hidden="true"></div>
+        <div class="sheet-header">
+            <h2 id="mobile-menu-title" data-i18n="menu">Menu</h2>
+            <button id="close-mobile-menu" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        </div>
+        <div class="sheet-body">
+            <div id="mobile-categories" class="mobile-cat-grid"></div>
+            <div class="sheet-actions">
+                <button id="mm-select" class="sheet-row" type="button"><span class="ico" aria-hidden="true">☑️</span><span data-i18n="selecionar_varios">Selecionar Vários</span></button>
+                <button id="mm-device" class="sheet-row" type="button"><span class="ico" aria-hidden="true">💻</span><span data-i18n="info_aparelho">Info Aparelho</span></button>
+                <button id="btn-install-menu" class="sheet-row install-btn hidden" type="button"><span class="ico" aria-hidden="true">⬇️</span><span data-i18n="instalar_app">Instalar app</span></button>
+                <button id="mm-settings" class="sheet-row" type="button"><span class="ico" aria-hidden="true">⚙️</span><span data-i18n="configuracoes">Ajustes</span></button>
+            </div>
+            <div class="credits-box credits-row">
+                <a href="https://linktr.ee/Luis0s1" target="_blank" rel="noopener">🔗 Luis0s1</a>
+                <a href="https://linktr.ee/Luis__0s1" target="_blank" rel="noopener">🔗 Luis__0s1</a>
+                <a href="https://www.youtube.com/@luis_0s1" target="_blank" rel="noopener">▶ YouTube</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ Menu de contexto ============ -->
+    <div id="custom-context-menu" class="context-menu hidden glass" role="menu">
+        <button id="ctx-open" type="button" role="menuitem"><span aria-hidden="true">🚀</span> <span data-i18n="abrir">Abrir</span></button>
+        <button id="ctx-fav" type="button" role="menuitem"><span aria-hidden="true">⭐</span> <span data-i18n="favoritar">Favoritar</span></button>
+        <button id="ctx-edit" type="button" role="menuitem"><span aria-hidden="true">✏️</span> <span data-i18n="editar">Editar</span></button>
+        <button id="ctx-copy" type="button" role="menuitem"><span aria-hidden="true">📋</span> <span data-i18n="copiar_link">Copiar Link</span></button>
+        <button id="ctx-share" type="button" role="menuitem"><span aria-hidden="true">🔗</span> <span data-i18n="compartilhar">Compartilhar</span></button>
+        <button id="ctx-check" type="button" role="menuitem"><span aria-hidden="true">📡</span> <span data-i18n="verificar_status">Verificar Status</span></button>
+        <button id="ctx-select" type="button" role="menuitem"><span aria-hidden="true">☑️</span> <span data-i18n="selecionar">Selecionar</span></button>
+        <button id="ctx-delete" class="danger" type="button" role="menuitem"><span aria-hidden="true">🗑️</span> <span data-i18n="apagar_ocultar">Apagar / Ocultar</span></button>
+    </div>
+
+    <!-- ============ Painel de detalhes ============ -->
+    <div id="details-panel" class="details-panel hidden glass" role="dialog" aria-modal="true" aria-labelledby="panel-title">
+        <button id="close-panel" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        <div class="panel-layout">
+            <div class="panel-left">
+                <div id="panel-icon" class="panel-img-wrapper"></div>
+                <h2 id="panel-title">Nome</h2>
+                <div id="panel-badges" class="badges-row"></div>
+            </div>
+            <div class="panel-right">
+                <p id="panel-desc" class="panel-desc"></p>
+                <div id="panel-destaques-box" class="destaques-box hidden">
+                    <strong data-i18n="destaques">Destaques:</strong>
+                    <ul id="panel-destaques-list"></ul>
+                </div>
+                <p id="panel-url" class="panel-url-text"></p>
+                <div class="panel-actions-grid">
+                    <button id="btn-panel-launch" class="btn-action btn-action-launch" type="button"><span aria-hidden="true">🚀</span> <span data-i18n="abrir">Abrir</span></button>
+                    <button id="btn-panel-fav" class="btn-action" type="button"><span aria-hidden="true">⭐</span> <span data-i18n="favoritar">Favoritar</span></button>
+                    <button id="btn-panel-copy" class="btn-action" type="button"><span aria-hidden="true">📋</span> <span data-i18n="copiar_link">Copiar Link</span></button>
+                    <button id="btn-panel-share" class="btn-action" type="button"><span aria-hidden="true">🔗</span> <span data-i18n="compartilhar">Compartilhar</span></button>
+                    <button id="btn-panel-search" class="btn-action" type="button"><span aria-hidden="true">🔍</span> <span data-i18n="pesquisar_web">Pesquisar Web</span></button>
+                    <button id="btn-panel-check" class="btn-action" type="button"><span aria-hidden="true">📡</span> <span data-i18n="verificar">Verificar</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ Modal Criar / Editar ============ -->
+    <div id="create-modal" class="modal glass hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-header">
+            <h2 id="modal-title"><span aria-hidden="true">➕</span> <span id="modal-title-text" data-i18n="criar_botao">Criar Link</span></h2>
+            <button id="close-create" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        </div>
+        <div class="modal-body">
+            <form id="form-create-site" novalidate>
+                <input type="hidden" id="edit-site-id">
+                <input type="hidden" id="edit-site-orig-url">
+                <div class="form-group">
+                    <label for="new-site-url" data-i18n="url_site">URL do Site</label>
+                    <input type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" id="new-site-url" placeholder="https://exemplo.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-site-nome" data-i18n="nome_site">Nome do Site / App</label>
+                    <input type="text" id="new-site-nome" placeholder="Ex: CapCut Web" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-site-icon-type" data-i18n="tipo_icone">Ícone / Imagem</label>
+                    <select id="new-site-icon-type">
+                        <option value="auto" data-i18n="icone_auto">Automático (Favicon)</option>
+                        <option value="emoji" data-i18n="icone_emoji">Emoji 😃</option>
+                        <option value="link" data-i18n="icone_link">Link de Imagem 🔗</option>
+                        <option value="upload" data-i18n="icone_upload">Upload de Imagem 📁</option>
+                    </select>
+                </div>
+                <div class="form-group" id="icon-input-container"></div>
+                <div class="form-group">
+                    <label for="new-site-categoria" data-i18n="categoria">Categoria</label>
+                    <select id="new-site-categoria" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="new-site-desc" data-i18n="descricao">Descrição</label>
+                    <textarea id="new-site-desc" rows="2" maxlength="300"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button id="btn-cancel-create" class="btn-secondary" type="button" data-i18n="cancelar">Cancelar</button>
+            <button id="btn-save-create" class="btn-primary" type="submit" form="form-create-site" data-i18n="salvar">Salvar Link</button>
+        </div>
+    </div>
+
+    <!-- ============ Modal Ajustes ============ -->
+    <div id="settings-modal" class="modal glass hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <div class="modal-header">
+            <h2 id="settings-title"><span aria-hidden="true">⚙️</span> <span data-i18n="configuracoes">Ajustes</span></h2>
+            <button id="close-settings" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        </div>
+        <div class="modal-body settings-scroll">
+            <div class="setting-item">
+                <label for="pref-theme-select" data-i18n="tema">Tema</label>
+                <select id="pref-theme-select" class="btn-theme-pill">
+                    <option value="system-mode" data-i18n="tema_sistema">Sistema</option>
+                    <option value="dark-mode" data-i18n="tema_escuro">Escuro</option>
+                    <option value="light-mode" data-i18n="tema_claro">Claro</option>
+                </select>
+            </div>
+            <div class="setting-item">
+                <label for="pref-lang-select" data-i18n="idioma">Idioma</label>
+                <select id="pref-lang-select" class="btn-theme-pill"></select>
+            </div>
+            <div class="setting-item" id="row-gridcols">
+                <label for="pref-gridCols" data-i18n="colunas_pc">Colunas no Grid (PC: 3 a 10)</label>
+                <input type="number" id="pref-gridCols" min="3" max="10" value="6" class="setting-number-input">
+            </div>
+            <div class="setting-item hidden" id="row-open-mode">
+                <label for="pref-openMode" data-i18n="abrir_como">Abrir a extensão em</label>
+                <select id="pref-openMode" class="btn-theme-pill">
+                    <option value="tab" data-i18n="modo_aba">Aba inteira</option>
+                    <option value="popup" data-i18n="modo_popup">Popup</option>
+                </select>
+            </div>
+
+            <div class="setting-toggle-list">
+                <label><input type="checkbox" id="pref-bubble"> <span class="toggle-text" data-i18n="pref_bolha">Modo bolha (botão flutuante)</span> <span class="badge-status" id="st-bubble">OFF</span></label>
+                <p class="setting-hint hidden" id="hint-bubble" data-i18n="bolha_dica_ext"></p>
+                <label><input type="checkbox" id="pref-miniMenu"> <span class="toggle-text" data-i18n="pref_mini_menu">Menu Reduzido (Mini)</span> <span class="badge-status" id="st-miniMenu">OFF</span></label>
+                <label><input type="checkbox" id="pref-forceMobile"> <span class="toggle-text" data-i18n="pref_force_mobile">Interface de Celular</span> <span class="badge-status" id="st-forceMobile">OFF</span></label>
+                <label><input type="checkbox" id="pref-blur"> <span class="toggle-text" data-i18n="pref_blur">Fundo Desfocado (Blur)</span> <span class="badge-status" id="st-blur">OFF</span></label>
+                <label><input type="checkbox" id="pref-sound"> <span class="toggle-text" data-i18n="pref_som">Som de Clique</span> <span class="badge-status" id="st-sound">OFF</span></label>
+                <label><input type="checkbox" id="pref-images"> <span class="toggle-text" data-i18n="pref_imagens">Mostrar Imagens</span> <span class="badge-status" id="st-images">OFF</span></label>
+                <label><input type="checkbox" id="pref-names"> <span class="toggle-text" data-i18n="pref_nomes">Mostrar Nomes</span> <span class="badge-status" id="st-names">OFF</span></label>
+                <label><input type="checkbox" id="pref-desc"> <span class="toggle-text" data-i18n="pref_desc">Mostrar Descrições</span> <span class="badge-status" id="st-desc">OFF</span></label>
+                <label><input type="checkbox" id="pref-dots"> <span class="toggle-text" data-i18n="pref_pontos">Mostrar Botão ⋮</span> <span class="badge-status" id="st-dots">OFF</span></label>
+                <label><input type="checkbox" id="pref-checkOnOpen"> <span class="toggle-text" data-i18n="pref_check_open">Verificar sites ao abrir</span> <span class="badge-status" id="st-checkOnOpen">OFF</span></label>
+            </div>
+
+            <div class="settings-section-title" data-i18n="sites_ocultados">Sites Ocultados</div>
+            <div id="hidden-sites-list" class="hidden-sites-box"></div>
+
+            <div class="settings-section-title" data-i18n="backup_dados">Backup &amp; Dados</div>
+            <div class="setting-actions-row">
+                <button id="btn-export-data" class="btn-secondary" type="button"><span aria-hidden="true">📤</span> <span data-i18n="exportar">Exportar Links</span></button>
+                <button id="btn-import-data" class="btn-secondary" type="button"><span aria-hidden="true">📥</span> <span data-i18n="importar">Importar Links</span></button>
+                <input type="file" id="import-file-input" accept=".json,application/json" class="hidden">
+            </div>
+
+            <button id="btn-reset-settings" class="btn-primary danger btn-block" type="button" data-i18n="restaurar_ajustes">Restaurar Ajustes (Mantém Links)</button>
+        </div>
+    </div>
+
+    <!-- ============ Modal Informações do Aparelho ============ -->
+    <div id="device-modal" class="modal glass hidden" role="dialog" aria-modal="true" aria-labelledby="device-title">
+        <div class="modal-header">
+            <h2 id="device-title"><span aria-hidden="true">💻</span> <span data-i18n="info_aparelho">Info Aparelho</span></h2>
+            <button id="close-device" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        </div>
+        <div class="modal-body settings-scroll" id="device-info-content"></div>
+        <div class="modal-footer">
+            <button id="btn-copy-device-report" class="btn-primary" type="button" data-i18n="copiar_relatorio">Copiar Relatório</button>
+        </div>
+    </div>
+
+    <!-- ============ Modal Confirmação ============ -->
+    <div id="confirm-modal" class="modal glass hidden" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div class="modal-header">
+            <h2 id="confirm-title" data-i18n="confirmar_acao">Confirmar Ação</h2>
+            <button id="close-confirm" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        </div>
+        <div class="modal-body">
+            <p id="confirm-modal-msg"></p>
+            <ul id="confirm-modal-list" class="confirm-list"></ul>
+        </div>
+        <div class="modal-footer">
+            <button id="btn-confirm-cancel" class="btn-secondary" type="button" data-i18n="cancelar">Cancelar</button>
+            <button id="btn-confirm-ok" class="btn-primary danger" type="button" data-i18n="confirmar">Confirmar</button>
+        </div>
+    </div>
+
+    <!-- ============ Lançador rápido ============ -->
+    <div id="quick-launcher" class="quick-launcher glass hidden" role="dialog" aria-modal="true" aria-labelledby="ql-title">
+        <div class="modal-header">
+            <h2 id="ql-title"><span aria-hidden="true">⚡</span> PlayHub</h2>
+            <button id="close-quick" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        </div>
+        <div class="modal-body">
+            <input type="search" id="quick-search" autocomplete="off" spellcheck="false" data-i18n-ph="pesquisar" data-i18n-aria="pesquisar">
+            <div id="quick-results" class="quick-results"></div>
+        </div>
+    </div>
+
+    <div id="app-tooltip" class="app-tooltip hidden" role="tooltip"></div>
+    <div id="backdrop" class="backdrop hidden"></div>
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+    <script src="sites.js"></script>
+    <script src="i18n.js"></script>
+    <script src="script.js"></script>
+    <script src="bubble.js" defer></script>
+</body>
+</html>
+
