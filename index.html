@@ -1,109 +1,628 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlayHub</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    /* Estilo do aviso de atualização */
-    .update-banner {
-      display: none;
-      background-color: #ff9800;
-      color: #000;
-      text-align: center;
-      padding: 10px;
-      font-weight: bold;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    .update-banner button {
-      margin-left: 10px;
-      padding: 5px 10px;
-      cursor: pointer;
-      border: none;
-      background-color: #fff;
-      font-weight: bold;
-      border-radius: 4px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="description" content="PlayHub: central de links de apps, jogos, filmes, IAs e ferramentas.">
+    <title>PlayHub - Central de Apps &amp; Jogos</title>
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icones/icon.png">
+    <link rel="apple-touch-icon" href="icones/icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PlayHub">
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- ESTILOS DO SPLASH/LOADER E MODAL DE ABERTURA -->
+    <style>
+        #loading-screen-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #0f172a; color: #f8fafc;
+            z-index: 999999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            padding: 20px; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .spinner-loader {
+            width: 45px; height: 45px;
+            border: 4px solid rgba(56, 189, 248, 0.2);
+            border-top: 4px solid #38bdf8;
+            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .loader-card {
+            background: rgba(30, 41, 59, 0.95); border: 1px solid #334155;
+            padding: 24px; border-radius: 16px; max-width: 460px; width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); backdrop-filter: blur(10px);
+        }
+
+        .loader-title { color: #38bdf8; font-size: 20px; margin: 0 0 8px 0; }
+        .loader-msg { font-size: 13.5px; color: #94a3b8; margin-bottom: 14px; line-height: 1.5; }
+        .missing-list {
+            background: rgba(15, 23, 42, 0.8); color: #f43f5e;
+            padding: 10px; border-radius: 8px; font-family: monospace;
+            font-size: 12px; text-align: left; max-height: 100px; overflow-y: auto; margin-bottom: 16px;
+        }
+
+        .loader-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+        .btn-loader {
+            padding: 8px 14px; border-radius: 8px; border: none;
+            font-weight: 600; cursor: pointer; text-decoration: none; font-size: 12.5px;
+        }
+        .btn-loader-main { background: #38bdf8; color: #0f172a; }
+        .btn-loader-sec { background: #334155; color: #ffffff; }
+        .btn-loader-continue { background: transparent; color: #94a3b8; border: 1px solid #475569; }
+
+        /* Modal para Escolher Como Abrir o Link */
+        .open-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.7); z-index: 100000; justify-content: center; align-items: center;
+        }
+        .open-modal-content {
+            background: #1e293b; border: 1px solid #38bdf8; border-radius: 12px;
+            padding: 20px; text-align: center; max-width: 340px; width: 90%; color: #fff;
+        }
+
+        /* Foco Visual para Teclado (WASD / Setas) */
+        .card.keyboard-focused, .card:focus {
+            outline: 3px solid #38bdf8 !important; transform: scale(1.03); box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+    </style>
+
+    <!-- SCRIPT DA LÓGICA DE VERIFICAÇÃO E IDIOMA -->
+    <script>
+        const LOCAL_INDEX_VERSION = "2.6.0";
+        const GITHUB_REPO_URL = "https://github.com/luis0s1/playhub";
+        const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/luis0s1/playhub/main/";
+        const OFFICIAL_SITE_URL = "https://luis0s1.github.io/playhub/";
+        const ICON_PATH = "icones/icon.png";
+
+        const REQUIRED_FILES = [
+            "manifest.json",
+            "style.css",
+            "boot.js",
+            "sites.js",
+            "i18n.js",
+            "script.js",
+            "bubble.js",
+            "Server.js", 
+            "ai.js", 
+            "apps.js", 
+            "audio.js", 
+            "design.js", 
+            "dev.js", 
+            "games.js", 
+            "filmes e séries.js", 
+            "outros.js", 
+            "produtividade.js", 
+            "video.js"
+        ];
+
+        let missingFiles = [];
+        let targetUrlToOpen = "";
+
+        // Auto-detecção de Idioma
+        function detectLanguage() {
+            const userLang = navigator.language || navigator.userLanguage;
+            return userLang.startsWith('pt') ? 'pt-BR' : 'en';
+        }
+
+        // Verificação de Arquivos e Estrutura de Pastas
+        async function runSystemCheck() {
+            const statusMsg = document.getElementById('loader-status');
+            const missingBox = document.getElementById('loader-missing-box');
+            const actionBtns = document.getElementById('loader-actions');
+            const spinner = document.getElementById('loader-spinner');
+
+            missingFiles = [];
+
+            // Testa ícone da pasta local
+            try {
+                const iconRes = await fetch(`./${ICON_PATH}`);
+                if (!iconRes.ok) missingFiles.push("Pasta/arquivo: icones/icon.png");
+            } catch (e) {
+                missingFiles.push("Pasta/arquivo: icones/icon.png");
+            }
+
+            // Testa arquivos da raiz
+            for (const fileName of REQUIRED_FILES) {
+                try {
+                    const localRes = await fetch(`./${fileName}`);
+                    if (!localRes.ok) missingFiles.push(`Arquivo: ${fileName}`);
+                } catch (e) {
+                    missingFiles.push(`Arquivo: ${fileName}`);
+                }
+            }
+
+            // Se nada estiver faltando localmente, libera a página normalmente
+            if (missingFiles.length === 0) {
+                hideLoadingScreen();
+                return;
+            }
+
+            // Caso faltem arquivos JS, tenta buscar do GitHub RAW
+            if (statusMsg) statusMsg.innerText = `Buscando ${missingFiles.length} item(ns) pendente(s) da nuvem...`;
+
+            let downloadedCount = 0;
+            const missingScripts = missingFiles
+                .filter(item => item.startsWith("Arquivo: "))
+                .map(item => item.replace("Arquivo: ", ""))
+                .filter(file => file.endsWith(".js"));
+
+            for (const fileName of missingScripts) {
+                try {
+                    const remoteRes = await fetch(`${GITHUB_RAW_BASE}${encodeURIComponent(fileName)}`);
+                    if (remoteRes.ok) {
+                        const code = await remoteRes.text();
+                        const script = document.createElement('script');
+                        script.text = code;
+                        document.head.appendChild(script);
+                        downloadedCount++;
+                    }
+                } catch (err) {
+                    console.error(`[PlayHub] Erro ao buscar ${fileName} do GitHub.`, err);
+                }
+            }
+
+            // Se conseguiu baixar tudo ou parcialmente, oculta o loader após uma checagem rápida
+            if (downloadedCount > 0 && downloadedCount >= missingScripts.length) {
+                hideLoadingScreen();
+            } else {
+                if (spinner) spinner.style.display = 'none';
+                if (statusMsg) statusMsg.innerText = "Alguns arquivos locais não foram encontrados. Você pode abrir o site oficial ou continuar.";
+                if (missingBox) {
+                    missingBox.innerHTML = missingFiles.map(f => `<div>• ${f}</div>`).join('');
+                    missingBox.style.display = 'block';
+                }
+                if (actionBtns) actionBtns.style.display = 'flex';
+            }
+        }
+
+        function hideLoadingScreen() {
+            const screen = document.getElementById('loading-screen-overlay');
+            if (screen) {
+                screen.style.opacity = '0';
+                screen.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => screen.style.display = 'none', 300);
+            }
+        }
+
+        // Modal para escolher se abre link em nova aba ou na mesma
+        function promptOpenSite(url) {
+            targetUrlToOpen = url;
+            const modal = document.getElementById('openSiteModal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function confirmOpenSite(newTab) {
+            const modal = document.getElementById('openSiteModal');
+            if (modal) modal.style.display = 'none';
+            if (!targetUrlToOpen) return;
+
+            if (newTab) {
+                window.open(targetUrlToOpen, '_blank');
+            } else {
+                window.location.href = targetUrlToOpen;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentLang = detectLanguage();
+            console.log(`[PlayHub] Idioma ativo: ${currentLang}`);
+            runSystemCheck();
+            initKeyboardNavigation();
+        });
+
+        // Navegação por teclado (WASD / Setas / Espaço / Enter)
+        let focusedIndex = -1;
+        function initKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+                const cards = document.querySelectorAll('#grid-container .card, .grid .card');
+                if (cards.length === 0) return;
+
+                if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+
+                const key = e.key.toLowerCase();
+                if (['arrowright', 'd'].includes(key)) {
+                    focusedIndex = (focusedIndex + 1) % cards.length;
+                    updateFocus(cards);
+                } else if (['arrowleft', 'a'].includes(key)) {
+                    focusedIndex = (focusedIndex - 1 + cards.length) % cards.length;
+                    updateFocus(cards);
+                } else if (['arrowdown', 's'].includes(key)) {
+                    focusedIndex = Math.min(focusedIndex + 4, cards.length - 1);
+                    updateFocus(cards);
+                } else if (['arrowup', 'w'].includes(key)) {
+                    focusedIndex = Math.max(focusedIndex - 4, 0);
+                    updateFocus(cards);
+                } else if (e.code === 'Space' || key === 'enter') {
+                    e.preventDefault();
+                    if (focusedIndex >= 0 && cards[focusedIndex]) {
+                        const link = cards[focusedIndex].querySelector('a');
+                        if (link) promptOpenSite(link.href);
+                    }
+                }
+            });
+        }
+
+        function updateFocus(cards) {
+            cards.forEach(c => c.classList.remove('keyboard-focused'));
+            if (focusedIndex >= 0 && cards[focusedIndex]) {
+                cards[focusedIndex].classList.add('keyboard-focused');
+                cards[focusedIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+    </script>
+
+    <script src="boot.js"></script>
 </head>
-<body>
+<body class="system-mode">
 
-  <!-- Banner de aviso se houver atualização -->
-  <div id="updateBanner" class="update-banner">
-    ⚠️ Seus arquivos locais estão desatualizados ou incompletos!
-    <button onclick="forceGithubUpdate()">Atualizar pelo GitHub</button>
-  </div>
-
-  <header>
-    <h1>PlayHub</h1>
-    <input type="text" id="searchInput" placeholder="Pesquisar sites ou jogos..." oninput="handleSearch(this.value)">
-  </header>
-
-  <main id="app">
-    <div id="sitesGrid" class="grid">
-      <!-- Os cards dos sites serão inseridos aqui -->
+    <!-- ============ TELA DE CARREGAMENTO / RESILIÊNCIA ============ -->
+    <div id="loading-screen-overlay">
+        <div class="loader-card">
+            <div id="loader-spinner" class="spinner-loader"></div>
+            <h2 class="loader-title">PlayHub</h2>
+            <p id="loader-status" class="loader-msg">Verificando arquivos e componentes do sistema...</p>
+            <div id="loader-missing-box" class="missing-list" style="display: none;"></div>
+            <div id="loader-actions" class="loader-btns" style="display: none;">
+                <button class="btn-loader btn-loader-main" onclick="window.open(OFFICIAL_SITE_URL, '_blank')">Abrir Site Oficial</button>
+                <button class="btn-loader btn-loader-sec" onclick="window.open(GITHUB_REPO_URL, '_blank')">Abrir Repositório</button>
+                <button class="btn-loader btn-loader-continue" onclick="hideLoadingScreen()">Continuar Mesmo Assim</button>
+            </div>
+        </div>
     </div>
-  </main>
 
-  <script src="sites.js"></script>
+    <!-- ============ MODAL PARA ESCOLHER MODO DE ABERTURA ============ -->
+    <div id="openSiteModal" class="open-modal">
+        <div class="open-modal-content">
+            <h3>Abrir Link</h3>
+            <p style="font-size: 13px; color: #94a3b8; margin-bottom: 16px;">Como você deseja abrir este site?</p>
+            <div style="display: flex; gap: 8px; justify-content: center;">
+                <button class="btn-loader btn-loader-sec" onclick="confirmOpenSite(false)">Nesta Aba</button>
+                <button class="btn-loader btn-loader-main" onclick="confirmOpenSite(true)">Em Nova Aba</button>
+            </div>
+        </div>
+    </div>
 
-  <script>
-    // Mostra o aviso na tela se o sites.js detetar que está desatualizado
-    function showUpdateNotice() {
-      const banner = document.getElementById('updateBanner');
-      if (banner) banner.style.display = 'block';
-    }
+    <!-- ============ Barra lateral (computador) ============ -->
+    <nav id="sidebar" class="sidebar glass" aria-label="PlayHub">
+        <div class="sidebar-top">
+            <button class="sidebar-brand" id="brand-toggle" type="button">
+                <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 100 100"><polygon points="56,8 24,54 46,54 40,92 76,42 53,42"/></svg></span>
+                <span class="brand-name">PlayHub</span>
+            </button>
 
-    // Força o recarregamento baixando os dados do GitHub
-    async function forceGithubUpdate() {
-      if (typeof fetchFromGithubOnly === 'function') {
-        await fetchFromGithubOnly();
-        document.getElementById('updateBanner').style.display = 'none';
-      }
-    }
+            <button id="btn-nav-home" class="nav-btn filter-btn active" data-cat="todos" type="button">
+                <span class="icon" aria-hidden="true">🏠</span>
+                <span class="nav-label" data-i18n="inicio">Início</span>
+            </button>
 
-    // Renderiza os cartões na tela
-    function renderSites(lista) {
-      const container = document.getElementById('sitesGrid');
-      if (!container) return;
-      
-      container.innerHTML = '';
+            <button id="btn-nav-criados" class="nav-btn filter-btn" data-cat="criados" type="button">
+                <span class="icon" aria-hidden="true">🗃</span>
+                <span class="nav-label" data-i18n="criados">Criados</span>
+            </button>
 
-      if (!lista || lista.length === 0) {
-        container.innerHTML = '<p class="empty-msg">Nenhum site encontrado.</p>';
-        return;
-      }
+            <button id="btn-nav-favs" class="nav-btn filter-btn" data-cat="favoritos" type="button">
+                <span class="icon" aria-hidden="true">⭐</span>
+                <span class="nav-label" data-i18n="favoritos">Favoritos</span>
+            </button>
 
-      lista.forEach(site => {
-        if (site.isHidden) return;
+            <button id="btn-open-create" class="nav-btn nav-btn-add" type="button">
+                <span class="icon" aria-hidden="true">➕</span>
+                <span class="nav-label" data-i18n="criar_botao">Criar Link</span>
+            </button>
 
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div class="card-header">
-            ${site.iconData ? `<img src="${site.iconData}" alt="${site.name}" class="icon">` : '<div class="icon-placeholder">🌐</div>'}
-            <h3>${site.name}</h3>
-          </div>
-          <p>${site.description || ''}</p>
-          <div class="tags">
-            ${(site.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('')}
-          </div>
-          <a href="${site.url}" target="_blank" rel="noopener noreferrer" class="btn-link">Acessar</a>
-        `;
-        container.appendChild(card);
-      });
-    }
+            <button id="btn-multi-select" class="nav-btn" type="button">
+                <span class="icon" aria-hidden="true">☑️</span>
+                <span class="nav-label" data-i18n="selecionar_varios">Selecionar Vários</span>
+            </button>
 
-    function handleSearch(query) {
-      if (typeof searchSites === 'function') {
-        const resultados = searchSites(query);
-        renderSites(resultados);
-      }
-    }
-  </script>
+            <button id="btn-open-settings" class="nav-btn" type="button">
+                <span class="icon" aria-hidden="true">⚙️</span>
+                <span class="nav-label" data-i18n="configuracoes">Ajustes</span>
+            </button>
 
+            <button id="btn-device-info" class="nav-btn" type="button">
+                <span class="icon" aria-hidden="true">💻</span>
+                <span class="nav-label" data-i18n="info_aparelho">Info Aparelho</span>
+            </button>
+
+            <div class="sidebar-divider"></div>
+
+            <div id="dynamic-categories" class="categories-container"></div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="credits-box">
+                <a href="https://luis0s1.github.io/playhub/" target="_blank" rel="noopener">🌐 Site Oficial</a>
+                <a href="https://github.com/luis0s1/playhub" target="_blank" rel="noopener">💻 Repositório GitHub</a>
+                <a href="https://linktr.ee/Luis0s1" target="_blank" rel="noopener">🔗 Luis0s1</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============ Área principal ============ -->
+    <main id="main-content" class="main-content">
+        <header class="header glass" id="app-header">
+            <div class="header-brand">
+                <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 100 100"><polygon points="56,8 24,54 46,54 40,92 76,42 53,42"/></svg></span>
+                <h1>PlayHub</h1>
+            </div>
+
+            <div class="header-search" id="header-search" role="search">
+                <span class="search-ico" aria-hidden="true">🔎</span>
+                <input type="search" id="search-input" autocomplete="off" spellcheck="false"
+                       placeholder="Pesquisar site..." data-i18n-ph="pesquisar" data-i18n-aria="pesquisar">
+                <button id="btn-search-close" class="icon-btn mobile-only" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+            </div>
+
+            <div id="normal-header-actions" class="header-actions">
+                <button id="btn-search-open" class="icon-btn mobile-only" type="button" data-i18n-aria="pesquisar" aria-label="Pesquisar">🔎</button>
+                <button id="btn-install-top" class="btn-theme-pill install-btn hidden" type="button">
+                    <span aria-hidden="true">⬇️</span> <span data-i18n="instalar_app">Instalar app</span>
+                </button>
+                <select id="lang-selector" class="btn-theme-pill" data-i18n-aria="idioma" aria-label="Idioma">
+                    <option value="pt-BR">Português (BR)</option>
+                    <option value="en">English</option>
+                </select>
+                <button id="theme-toggle" class="icon-btn" type="button" data-i18n-aria="tema" aria-label="Tema">🌙</button>
+                <button id="btn-settings-top" class="icon-btn mobile-only" type="button" data-i18n-aria="configuracoes" aria-label="Ajustes">⚙️</button>
+            </div>
+
+            <div id="selection-header-actions" class="header-actions hidden">
+                <span id="selection-count-label" class="selection-count">0</span>
+                <button id="btn-sel-fav" class="btn-theme-pill" type="button"><span aria-hidden="true">⭐</span> <span data-i18n="favoritar">Favoritar</span></button>
+                <button id="btn-sel-del" class="btn-theme-pill danger" type="button"><span aria-hidden="true">🗑️</span> <span data-i18n="apagar_ocultar">Apagar/Ocultar</span></button>
+                <button id="btn-sel-cancel" class="btn-theme-pill" type="button"><span aria-hidden="true">✖</span> <span data-i18n="cancelar">Cancelar</span></button>
+            </div>
+        </header>
+
+        <div id="grid-container" class="grid-container"></div>
+
+        <footer class="footer-credits">
+            <p>⚡ PlayHub | <a href="https://luis0s1.github.io/playhub/" target="_blank" style="color: #38bdf8;">Site Oficial</a> | <a href="https://github.com/luis0s1/playhub" target="_blank" style="color: #38bdf8;">GitHub</a></p>
+        </footer>
+    </main>
+
+    <!-- ============ Navegação de baixo (celular) ============ -->
+    <nav id="bottom-nav" class="bottom-nav glass" aria-label="PlayHub">
+        <button class="bn-btn filter-btn active" data-cat="todos" type="button">
+            <span class="bn-ico" aria-hidden="true">🏠</span><span class="bn-label" data-i18n="inicio">Início</span>
+        </button>
+        <button class="bn-btn filter-btn" data-cat="criados" type="button">
+            <span class="bn-ico" aria-hidden="true">🗃</span><span class="bn-label" data-i18n="criados">Criados</span>
+        </button>
+        <button class="bn-btn filter-btn" data-cat="favoritos" type="button">
+            <span class="bn-ico" aria-hidden="true">⭐</span><span class="bn-label" data-i18n="favoritos">Favoritos</span>
+        </button>
+        <button id="bn-create" class="bn-btn bn-create" type="button">
+            <span class="bn-ico" aria-hidden="true">➕</span><span class="bn-label" data-i18n="criar">Criar</span>
+        </button>
+        <button id="bn-menu" class="bn-btn" type="button" aria-haspopup="dialog">
+            <span class="bn-ico" aria-hidden="true">☰</span><span class="bn-label" data-i18n="menu">Menu</span>
+        </button>
+    </nav>
+
+    <!-- ============ Menu inicial do celular (folha de baixo) ============ -->
+    <div id="mobile-menu" class="sheet glass hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title">
+        <div class="sheet-handle" aria-hidden="true"></div>
+        <div class="sheet-header">
+            <h2 id="mobile-menu-title" data-i18n="menu">Menu</h2>
+            <button id="close-mobile-menu" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        </div>
+        <div class="sheet-body">
+            <div id="mobile-categories" class="mobile-cat-grid"></div>
+            <div class="sheet-actions">
+                <button id="mm-select" class="sheet-row" type="button"><span class="ico" aria-hidden="true">☑️</span><span data-i18n="selecionar_varios">Selecionar Vários</span></button>
+                <button id="mm-device" class="sheet-row" type="button"><span class="ico" aria-hidden="true">💻</span><span data-i18n="info_aparelho">Info Aparelho</span></button>
+                <button id="btn-install-menu" class="sheet-row install-btn hidden" type="button"><span class="ico" aria-hidden="true">⬇️</span><span data-i18n="instalar_app">Instalar app</span></button>
+                <button id="mm-settings" class="sheet-row" type="button"><span class="ico" aria-hidden="true">⚙️</span><span data-i18n="configuracoes">Ajustes</span></button>
+            </div>
+            <div class="credits-box credits-row">
+                <a href="https://luis0s1.github.io/playhub/" target="_blank" rel="noopener">🌐 Site Oficial</a>
+                <a href="https://github.com/luis0s1/playhub" target="_blank" rel="noopener">💻 Repositório GitHub</a>
+                <a href="https://linktr.ee/Luis0s1" target="_blank" rel="noopener">🔗 Luis0s1</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ Menu de contexto ============ -->
+    <div id="custom-context-menu" class="context-menu hidden glass" role="menu">
+        <button id="ctx-open" type="button" role="menuitem"><span aria-hidden="true">🚀</span> <span data-i18n="abrir">Abrir</span></button>
+        <button id="ctx-fav" type="button" role="menuitem"><span aria-hidden="true">⭐</span> <span data-i18n="favoritar">Favoritar</span></button>
+        <button id="ctx-edit" type="button" role="menuitem"><span aria-hidden="true">✏️</span> <span data-i18n="editar">Editar</span></button>
+        <button id="ctx-copy" type="button" role="menuitem"><span aria-hidden="true">📋</span> <span data-i18n="copiar_link">Copiar Link</span></button>
+        <button id="ctx-share" type="button" role="menuitem"><span aria-hidden="true">🔗</span> <span data-i18n="compartilhar">Compartilhar</span></button>
+        <button id="ctx-check" type="button" role="menuitem"><span aria-hidden="true">📡</span> <span data-i18n="verificar_status">Verificar Status</span></button>
+        <button id="ctx-select" type="button" role="menuitem"><span aria-hidden="true">☑️</span> <span data-i18n="selecionar">Selecionar</span></button>
+        <button id="ctx-delete" class="danger" type="button" role="menuitem"><span aria-hidden="true">🗑️</span> <span data-i18n="apagar_ocultar">Apagar / Ocultar</span></button>
+    </div>
+
+    <!-- ============ Painel de detalhes ============ -->
+    <div id="details-panel" class="details-panel hidden glass" role="dialog" aria-modal="true" aria-labelledby="panel-title">
+        <button id="close-panel" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        <div class="panel-layout">
+            <div class="panel-left">
+                <div id="panel-icon" class="panel-img-wrapper"></div>
+                <h2 id="panel-title">Nome</h2>
+                <div id="panel-badges" class="badges-row"></div>
+            </div>
+            <div class="panel-right">
+                <p id="panel-desc" class="panel-desc"></p>
+                <div id="panel-destaques-box" class="destaques-box hidden">
+                    <strong data-i18n="destaques">Destaques:</strong>
+                    <ul id="panel-destaques-list"></ul>
+                </div>
+                <p id="panel-url" class="panel-url-text"></p>
+                <div class="panel-actions-grid">
+                    <button id="btn-panel-launch" class="btn-action btn-action-launch" type="button"><span aria-hidden="true">🚀</span> <span data-i18n="abrir">Abrir</span></button>
+                    <button id="btn-panel-fav" class="btn-action" type="button"><span aria-hidden="true">⭐</span> <span data-i18n="favoritar">Favoritar</span></button>
+                    <button id="btn-panel-copy" class="btn-action" type="button"><span aria-hidden="true">📋</span> <span data-i18n="copiar_link">Copiar Link</span></button>
+                    <button id="btn-panel-share" class="btn-action" type="button"><span aria-hidden="true">🔗</span> <span data-i18n="compartilhar">Compartilhar</span></button>
+                    <button id="btn-panel-search" class="btn-action" type="button"><span aria-hidden="true">🔍</span> <span data-i18n="pesquisar_web">Pesquisar Web</span></button>
+                    <button id="btn-panel-check" class="btn-action" type="button"><span aria-hidden="true">📡</span> <span data-i18n="verificar">Verificar</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ Modal Criar / Editar ============ -->
+    <div id="create-modal" class="modal glass hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-header">
+            <h2 id="modal-title"><span aria-hidden="true">➕</span> <span id="modal-title-text" data-i18n="criar_botao">Criar Link</span></h2>
+            <button id="close-create" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        </div>
+        <div class="modal-body">
+            <form id="form-create-site" novalidate>
+                <input type="hidden" id="edit-site-id">
+                <input type="hidden" id="edit-site-orig-url">
+                <div class="form-group">
+                    <label for="new-site-url" data-i18n="url_site">URL do Site</label>
+                    <input type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" id="new-site-url" placeholder="https://exemplo.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-site-nome" data-i18n="nome_site">Nome do Site / App</label>
+                    <input type="text" id="new-site-nome" placeholder="Ex: CapCut Web" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-site-icon-type" data-i18n="tipo_icone">Ícone / Imagem</label>
+                    <select id="new-site-icon-type">
+                        <option value="auto" data-i18n="icone_auto">Automático (Favicon)</option>
+                        <option value="emoji" data-i18n="icone_emoji">Emoji 😃</option>
+                        <option value="link" data-i18n="icone_link">Link de Imagem 🔗</option>
+                        <option value="upload" data-i18n="icone_upload">Upload de Imagem 📁</option>
+                    </select>
+                </div>
+                <div class="form-group" id="icon-input-container"></div>
+                <div class="form-group">
+                    <label for="new-site-categoria" data-i18n="categoria">Categoria</label>
+                    <select id="new-site-categoria" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="new-site-desc" data-i18n="descricao">Descrição</label>
+                    <textarea id="new-site-desc" rows="2" maxlength="300"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button id="btn-cancel-create" class="btn-secondary" type="button" data-i18n="cancelar">Cancelar</button>
+            <button id="btn-save-create" class="btn-primary" type="submit" form="form-create-site" data-i18n="salvar">Salvar Link</button>
+        </div>
+    </div>
+
+    <!-- ============ Modal Ajustes ============ -->
+    <div id="settings-modal" class="modal glass hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <div class="modal-header">
+            <h2 id="settings-title"><span aria-hidden="true">⚙️</span> <span data-i18n="configuracoes">Ajustes</span></h2>
+            <button id="close-settings" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        </div>
+        <div class="modal-body settings-scroll">
+            <div class="setting-item">
+                <label for="pref-theme-select" data-i18n="tema">Tema</label>
+                <select id="pref-theme-select" class="btn-theme-pill">
+                    <option value="system-mode" data-i18n="tema_sistema">Sistema</option>
+                    <option value="dark-mode" data-i18n="tema_escuro">Escuro</option>
+                    <option value="light-mode" data-i18n="tema_claro">Claro</option>
+                </select>
+            </div>
+            <div class="setting-item">
+                <label for="pref-lang-select" data-i18n="idioma">Idioma</label>
+                <select id="pref-lang-select" class="btn-theme-pill"></select>
+            </div>
+            <div class="setting-item" id="row-gridcols">
+                <label for="pref-gridCols" data-i18n="colunas_pc">Colunas no Grid (PC: 3 a 10)</label>
+                <input type="number" id="pref-gridCols" min="3" max="10" value="6" class="setting-number-input">
+            </div>
+            <div class="setting-item hidden" id="row-open-mode">
+                <label for="pref-openMode" data-i18n="abrir_como">Abrir a extensão em</label>
+                <select id="pref-openMode" class="btn-theme-pill">
+                    <option value="tab" data-i18n="modo_aba">Aba inteira</option>
+                    <option value="popup" data-i18n="modo_popup">Popup</option>
+                </select>
+            </div>
+
+            <div class="setting-toggle-list">
+                <label><input type="checkbox" id="pref-bubble"> <span class="toggle-text" data-i18n="pref_bolha">Modo bolha (botão flutuante)</span> <span class="badge-status" id="st-bubble">OFF</span></label>
+                <p class="setting-hint hidden" id="hint-bubble" data-i18n="bolha_dica_ext"></p>
+                <label><input type="checkbox" id="pref-miniMenu"> <span class="toggle-text" data-i18n="pref_mini_menu">Menu Reduzido (Mini)</span> <span class="badge-status" id="st-miniMenu">OFF</span></label>
+                <label><input type="checkbox" id="pref-forceMobile"> <span class="toggle-text" data-i18n="pref_force_mobile">Interface de Celular</span> <span class="badge-status" id="st-forceMobile">OFF</span></label>
+                <label><input type="checkbox" id="pref-blur"> <span class="toggle-text" data-i18n="pref_blur">Fundo Desfocado (Blur)</span> <span class="badge-status" id="st-blur">OFF</span></label>
+                <label><input type="checkbox" id="pref-sound"> <span class="toggle-text" data-i18n="pref_som">Som de Clique</span> <span class="badge-status" id="st-sound">OFF</span></label>
+                <label><input type="checkbox" id="pref-images"> <span class="toggle-text" data-i18n="pref_imagens">Mostrar Imagens</span> <span class="badge-status" id="st-images">OFF</span></label>
+                <label><input type="checkbox" id="pref-names"> <span class="toggle-text" data-i18n="pref_nomes">Mostrar Nomes</span> <span class="badge-status" id="st-names">OFF</span></label>
+                <label><input type="checkbox" id="pref-desc"> <span class="toggle-text" data-i18n="pref_desc">Mostrar Descrições</span> <span class="badge-status" id="st-desc">OFF</span></label>
+                <label><input type="checkbox" id="pref-dots"> <span class="toggle-text" data-i18n="pref_pontos">Mostrar Botão ⋮</span> <span class="badge-status" id="st-dots">OFF</span></label>
+                <label><input type="checkbox" id="pref-checkOnOpen"> <span class="toggle-text" data-i18n="pref_check_open">Verificar sites ao abrir</span> <span class="badge-status" id="st-checkOnOpen">OFF</span></label>
+            </div>
+
+            <div class="settings-section-title" data-i18n="sites_ocultados">Sites Ocultados</div>
+            <div id="hidden-sites-list" class="hidden-sites-box"></div>
+
+            <div class="settings-section-title" data-i18n="backup_dados">Backup &amp; Dados</div>
+            <div class="setting-actions-row">
+                <button id="btn-export-data" class="btn-secondary" type="button"><span aria-hidden="true">📤</span> <span data-i18n="exportar">Exportar Links</span></button>
+                <button id="btn-import-data" class="btn-secondary" type="button"><span aria-hidden="true">📥</span> <span data-i18n="importar">Importar Links</span></button>
+                <input type="file" id="import-file-input" accept=".json,application/json" class="hidden">
+            </div>
+
+            <button id="btn-reset-settings" class="btn-primary danger btn-block" type="button" data-i18n="restaurar_ajustes">Restaurar Ajustes (Mantém Links)</button>
+        </div>
+    </div>
+
+    <!-- ============ Modal Informações do Aparelho ============ -->
+    <div id="device-modal" class="modal glass hidden" role="dialog" aria-modal="true" aria-labelledby="device-title">
+        <div class="modal-header">
+            <h2 id="device-title"><span aria-hidden="true">💻</span> <span data-i18n="info_aparelho">Info Aparelho</span></h2>
+            <button id="close-device" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        </div>
+        <div class="modal-body settings-scroll" id="device-info-content"></div>
+        <div class="modal-footer">
+            <button id="btn-copy-device-report" class="btn-primary" type="button" data-i18n="copiar_relatorio">Copiar Relatório</button>
+        </div>
+    </div>
+
+    <!-- ============ Modal Confirmação ============ -->
+    <div id="confirm-modal" class="modal glass hidden" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div class="modal-header">
+            <h2 id="confirm-title" data-i18n="confirmar_acao">Confirmar Ação</h2>
+            <button id="close-confirm" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        </div>
+        <div class="modal-body">
+            <p id="confirm-modal-msg"></p>
+            <ul id="confirm-modal-list" class="confirm-list"></ul>
+        </div>
+        <div class="modal-footer">
+            <button id="btn-confirm-cancel" class="btn-secondary" type="button" data-i18n="cancelar">Cancelar</button>
+            <button id="btn-confirm-ok" class="btn-primary danger" type="button" data-i18n="confirmar">Confirmar</button>
+        </div>
+    </div>
+
+    <!-- ============ Lançador rápido ============ -->
+    <div id="quick-launcher" class="quick-launcher glass hidden" role="dialog" aria-modal="true" aria-labelledby="ql-title">
+        <div class="modal-header">
+            <h2 id="ql-title"><span aria-hidden="true">⚡</span> PlayHub</h2>
+            <button id="close-quick" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
+        </div>
+        <div class="modal-body">
+            <input type="search" id="quick-search" autocomplete="off" spellcheck="false" data-i18n-ph="pesquisar" data-i18n-aria="pesquisar">
+            <div id="quick-results" class="quick-results"></div>
+        </div>
+    </div>
+
+    <div id="app-tooltip" class="app-tooltip hidden" role="tooltip"></div>
+    <div id="backdrop" class="backdrop hidden"></div>
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+    <script src="sites.js"></script>
+    <script src="i18n.js"></script>
+    <script src="script.js"></script>
+    <script src="bubble.js" defer></script>
 </body>
 </html>
