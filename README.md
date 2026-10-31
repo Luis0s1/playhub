@@ -1,6 +1,7 @@
 # 🗃 PlayHub
 ### 🌐 Acesse o site: [Clique aqui](https://luis0s1.github.io/playhub/)
 
+
 O PlayHub é um aplicativo web progressivo (PWA) moderno e intuitivo, criado para organizar e acessar rapidamente seus links, jogos e atalhos favoritos.
 
 ---
