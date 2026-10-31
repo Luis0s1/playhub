@@ -34,10 +34,10 @@ luis0s1.github.io/playhub/
 ## 🗃📑 100% **educational 📚 and business 💼**,It's  100% 📄 legal and 🏛 tax-free. 
 
 
-- 📌  🔗 Share this with your **school 📚** or **university 🏫** for gam##, parties, or if you have a child 🙋‍♂️🧑‍🎓🧔‍♀️👩‍💻, share it with the **school 📚 or university 🏫** to make working easier.
+- 📌  🔗 Share this with your **school 📚** or **university 🏫** for gam##, parties, or if you have a child (a) 🙋‍♂️🧑‍🎓🧔‍♀️👩‍💻, share it with the **school 📚 or university 🏫** to make working easier.
 
 
-- **📃100%(educational 🏫 and business-oriented 💼, and 100% 📄 legal, 🏛 tax-free) **
+- **📃100%(educational 🏫 and business-oriented 💼, and 100% 📄 legal, 🏛 tax-free)**
 
 
 
