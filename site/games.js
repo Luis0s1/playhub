@@ -1,4 +1,4 @@
-const games_SITES = [
+const GAMES_SITES = [
   {
     "name": "Astra Client",
     "url": "https://astraclientorg.github.io/",
