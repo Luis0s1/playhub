@@ -9,22 +9,16 @@ O PlayHub é um aplicativo web progressivo (PWA) moderno e intuitivo, criado par
 
 >
 >- **📱 Suporte a PWA:** Instala-se diretamente no seu dispositivo como um aplicativo.
-
 >
 >- **🌐 Multilíngue:** Suporte simples para vários idiomas.
-
 >
 >- **🌙 Modo Escuro e Claro:** A interface se adapta ao tema do seu sistema.
-
 >
 >- **🔎 Busca Rápida:** Encontre facilmente seus links e jogos salvos.
-
 >
 >- **🛠️ Gerenciamento de Links:** Adicione, personalize e organize novos links e atalhos.
-
 >
 >- **💾 Backup e Dados:** Exporte e importe suas configurações facilmente.
-
 >.
 
 ---
