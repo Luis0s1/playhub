@@ -3198,5 +3198,37 @@ const SITES = [
       "jogos"
     ],
     "iconData": ""
-  }
+  },
+  {
+      "id": "c_mvvonpmw1iz2",
+      "name": "Github",
+      "url": "https://github.com",
+      "category": "dev",
+      "description": "Plataforma de hospedagem e gestão de repositórios Git.",
+      "iconData": ""
+    },
+    {
+      "id": "c_mvwq86uw2tyk",
+      "name": "Mortal Kombat  9",
+      "url": "https://mk9.lauta.site/",
+      "category": "jogos",
+      "description": "",
+      "iconData": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1XRQkR-UflWwN7k6rVZlWp8J0eRolWo9fk25tOUmRyA&s=10"
+    },
+    {
+      "id": "c_mvwqa3u1rkzc",
+      "name": "Need for Speed Underground 2 Revived",
+      "url": "https://nfsu2.xyz",
+      "category": "jogos",
+      "description": "",
+      "iconData": ""
+    },
+    {
+      "id": "c_mvwqdolmax2c",
+      "name": "Is Agentic",
+      "url": "https://is-agentic.com",
+      "category": "design",
+      "description": "",
+      "iconData": ""
+    }
 ];
