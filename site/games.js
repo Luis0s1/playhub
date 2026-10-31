@@ -337,7 +337,7 @@ const GAMES_SITES = [
     "price": "free",
     "description": "Modo Zombies do Black Ops 1 com o mapa Kino der Toten no browser.",
     "tags": ["zombies"],
-    "iconData": ""
+    "iconData": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDbsumUqrsrfG8DFLxmiOztfIrbnTnvfZiD1SLGMujGg&s=10"
   },
   {
     "name": "skate 3",
