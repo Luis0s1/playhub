@@ -33,7 +33,7 @@ O PlayHub é um aplicativo web progressivo (PWA) moderno e intuitivo, criado par
 ```🔗 link
 luis0s1.github.io/playhub/
 ```
-🔗 Compartilhe com sua escola 🏫 ou universidade 🏫, para jogara, faça um festas ou se você tiver um filho mada para ele(a) compartilhe com a escola ou universidade, para to pla# trabalhar mais fácil . 
- 
----
-100% educativo e empresarial 
+
+🔗 Share this with your school 🏫 or university 🏫 for games, parties, or if you have a child, share it with the school or university to make working easier.
+
+--- 100% educational and business-oriented 
