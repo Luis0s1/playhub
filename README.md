@@ -25,6 +25,31 @@ It functions seamlessly as a standalone web page, an installable Progressive Web
 
 ---
 
+<p align="center">
+  <a href="https://luis0s1.github.io/playhub/">
+    <img src="icons-site/preview-light.png" alt="Modo Claro 1" width="200" style="border-radius: 8px;">
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://luis0s1.github.io/playhub/">
+    <img src="icons-site/preview-dark.png" alt="Modo Escuro 1" width="200" style="border-radius: 8px;">
+  </a>
+</p>
+<p align="center">
+  <a href="https://luis0s1.github.io/playhub/">
+    <img src="icons-site/preview-light-2.png" alt="Modo Claro 2" width="200" style="border-radius: 8px;">
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://luis0s1.github.io/playhub/">
+    <img src="icons-site/preview-dark-2.png" alt="Modo Escuro 2" width="200" style="border-radius: 8px;">
+  </a>
+</p>
+<p align="center">
+  <sub>☀️ <b>Modo Claro</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🌙 <b>Modo Escuro</b></sub>
+</p>
+
+
+---
+
 ## 📂 Project Architecture
 
 Copy the full file tree structure below:
