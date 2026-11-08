@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#0f172a">
-    <meta name="description" content="PlayHub: central de links de apps, jogos, filmes, IAs e ferramentas.">
+    <meta name="description" content="PlayHub: A central hub for links to apps, games, movies, AI, and tools.">
     <title>PlayHub - Central de Apps &amp; Jogos</title>
 
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="icones/icon.png">
-    <link rel="apple-touch-icon" href="icones/icon.png">
+    <link rel="icon" type="image/png" href="icons/icon.png">
+    <link rel="apple-touch-icon" href="icons/icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -127,9 +127,9 @@
             // Testa ícone da pasta local
             try {
                 const iconRes = await fetch(`./${ICON_PATH}`);
-                if (!iconRes.ok) missingFiles.push("Pasta/arquivo: icones/icon.png");
+                if (!iconRes.ok) missingFiles.push("Pasta/arquivo: icons/icon.png");
             } catch (e) {
-                missingFiles.push("Pasta/arquivo: icones/icon.png");
+                missingFiles.push("Pasta/arquivo: icons/icon.png");
             }
 
             // Testa arquivos da raiz
@@ -263,7 +263,7 @@
     </script>
 
     <script src="icons-catalog.js"></script>
-    <script src="boot.js"></script>
+    <script src="background.js"></script>
 </head>
 <body class="system-mode">
 
@@ -318,7 +318,7 @@
             </button>
 
             <button id="btn-open-create" class="nav-btn nav-btn-add" type="button">
-                <span class="icon" aria-hidden="true" data-icon="criar">➕</span>
+                <span class="icon" aria-hidden="true" data-icon="criar">+</span>
                 <span class="nav-label" data-i18n="criar_botao">Criar Link</span>
             </button>
 
@@ -369,7 +369,7 @@
             <div id="normal-header-actions" class="header-actions">
                 <button id="btn-search-open" class="icon-btn mobile-only" type="button" data-i18n-aria="pesquisar" aria-label="Pesquisar" data-icon="busca">🔎</button>
                 <button id="btn-install-top" class="btn-theme-pill install-btn hidden" type="button">
-                    <span aria-hidden="true">⬇️</span> <span data-i18n="instalar_app">Instalar app</span>
+                    <span aria-hidden="true">📥</span> <span data-i18n="instalar_app">Instalar app</span>
                 </button>
                 <select id="lang-selector" class="btn-theme-pill" data-i18n-aria="idioma" aria-label="Idioma">
                     <option value="pt-BR">Português (BR)</option>
