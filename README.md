@@ -27,20 +27,20 @@ It functions seamlessly as a standalone web page, an installable Progressive Web
 
 <p align="center">
   <a href="https://luis0s1.github.io/playhub/">
-    <img src="icons-site/preview-light.png" alt="Modo Claro 1" width="200" style="border-radius: 8px;">
+    <img src="icons/icons-site/preview-light.png" alt="Modo Claro 1" width="200" style="border-radius: 8px;">
   </a>
   &nbsp;&nbsp;
   <a href="https://luis0s1.github.io/playhub/">
-    <img src="icons-site/preview-dark.png" alt="Modo Escuro 1" width="200" style="border-radius: 8px;">
+    <img src="icons/icons-site/preview-dark.png" alt="Modo Escuro 1" width="200" style="border-radius: 8px;">
   </a>
 </p>
 <p align="center">
   <a href="https://luis0s1.github.io/playhub/">
-    <img src="icons-site/preview-light-2.png" alt="Modo Claro 2" width="200" style="border-radius: 8px;">
+    <img src="icons/icons-site/preview-light-2.png" alt="Modo Claro 2" width="200" style="border-radius: 8px;">
   </a>
   &nbsp;&nbsp;
   <a href="https://luis0s1.github.io/playhub/">
-    <img src="icons-site/preview-dark-2.png" alt="Modo Escuro 2" width="200" style="border-radius: 8px;">
+    <img src="icons/ icons-site/preview-dark-2.png" alt="Modo Escuro 2" width="200" style="border-radius: 8px;">
   </a>
 </p>
 <p align="center">
@@ -64,7 +64,7 @@ playhub/
 ├── manifest.json           # Web App Manifest for PWA & Extension configuration
 ├── background.js          # Background service worker script for extension features
 ├── sw.js                  # PWA offline cache Service Worker
-├── icons-site/            # Local high-resolution WebP and PNG icon assets
+├── icons/icons-site/            # Local high-resolution WebP and PNG icon assets
 └── sites/                 # Modular dataset JS files by category:
     ├── ai.js              # Artificial Intelligence tools & chatbots
     ├── apps.js            # Web applications & utility tools
