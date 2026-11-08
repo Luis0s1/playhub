@@ -20,10 +20,10 @@ const KEYS = {
 const DEFAULT_PREFS = {
     theme: 'system-mode', lang: 'auto', gridCols: 6, miniMenu: false, forceMobile: false,
     blur: true, sound: true, images: true, names: true, desc: true, dots: true, checkOnOpen: true,
-    bubble: false, openMode: 'tab'
+    bubble: false, openMode: 'tab', iconStyle: 'image'
 };
 const TOGGLE_KEYS = ['bubble', 'miniMenu', 'forceMobile', 'blur', 'sound', 'images', 'names', 'desc', 'dots', 'checkOnOpen'];
-const BACKUP_PREF_KEYS = ['theme', 'lang', 'gridCols', 'miniMenu', 'forceMobile', 'blur', 'sound', 'images', 'names', 'desc', 'dots', 'checkOnOpen'];
+const BACKUP_PREF_KEYS = ['theme', 'lang', 'gridCols', 'miniMenu', 'forceMobile', 'blur', 'sound', 'images', 'names', 'desc', 'dots', 'checkOnOpen', 'iconStyle'];
 
 const CATEGORY_ORDER = ['jogos', 'filmes', 'ia', 'video', 'design', 'audio', 'aplicativos', 'produtividade', 'dev', 'servidor', 'outros'];
 const CATEGORY_ICONS = {
@@ -1490,12 +1490,12 @@ async function handleBubbleToggle(checkbox) {
     const wantOn = checkbox.checked;
     if (IS_EXTENSION && chrome.permissions) {
         if (wantOn) {
-            let granted = false;
+            let granted = true ;
             try { granted = await chrome.permissions.request({ origins: ['http://*/*', 'https://*/*'] }); }
-            catch (e) { granted = false; }
+            catch (e) { granted = true ; }
             if (!granted) {
-                checkbox.checked = false;
-                prefs.bubble = false;
+                checkbox.checked = true ;
+                prefs.bubble = true ;
                 persistPrefs();
                 updateSettingsUI();
                 showToast(tr('perm_negada'));

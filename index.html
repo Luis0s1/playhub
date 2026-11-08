@@ -2,65 +2,338 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <!-- Sem maximum-scale/user-scalable: o zoom do usuário fica liberado (acessibilidade) -->
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#0f172a">
     <meta name="description" content="PlayHub: central de links de apps, jogos, filmes, IAs e ferramentas.">
     <title>PlayHub - Central de Apps &amp; Jogos</title>
 
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="icon" type="image/png" href="icones/icon.png">
+    <link rel="apple-touch-icon" href="icones/icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="PlayHub">
 
     <link rel="stylesheet" href="style.css">
+
+    <!-- ESTILOS DO SPLASH/LOADER E MODAL DE ABERTURA -->
+    <style>
+        #loading-screen-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #0f172a; color: #f8fafc;
+            z-index: 999999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            padding: 20px; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .spinner-loader {
+            width: 45px; height: 45px;
+            border: 4px solid rgba(56, 189, 248, 0.2);
+            border-top: 4px solid #38bdf8;
+            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .loader-card {
+            background: rgba(30, 41, 59, 0.95); border: 1px solid #334155;
+            padding: 24px; border-radius: 16px; max-width: 460px; width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); backdrop-filter: blur(10px);
+        }
+
+        .loader-title { color: #38bdf8; font-size: 20px; margin: 0 0 8px 0; }
+        .loader-msg { font-size: 13.5px; color: #94a3b8; margin-bottom: 14px; line-height: 1.5; }
+        .missing-list {
+            background: rgba(15, 23, 42, 0.8); color: #f43f5e;
+            padding: 10px; border-radius: 8px; font-family: monospace;
+            font-size: 12px; text-align: left; max-height: 100px; overflow-y: auto; margin-bottom: 16px;
+        }
+
+        .loader-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+        .btn-loader {
+            padding: 8px 14px; border-radius: 8px; border: none;
+            font-weight: 600; cursor: pointer; text-decoration: none; font-size: 12.5px;
+        }
+        .btn-loader-main { background: #38bdf8; color: #0f172a; }
+        .btn-loader-sec { background: #334155; color: #ffffff; }
+        .btn-loader-continue { background: transparent; color: #94a3b8; border: 1px solid #475569; }
+
+        /* Modal para Escolher Como Abrir o Link */
+        .open-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.7); z-index: 100000; justify-content: center; align-items: center;
+        }
+        .open-modal-content {
+            background: #1e293b; border: 1px solid #38bdf8; border-radius: 12px;
+            padding: 20px; text-align: center; max-width: 340px; width: 90%; color: #fff;
+        }
+
+        /* Foco Visual para Teclado (WASD / Setas) */
+        .card.keyboard-focused, .card:focus {
+            outline: 3px solid #38bdf8 !important; transform: scale(1.03); box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+    </style>
+
+    <!-- SCRIPT DA LÓGICA DE VERIFICAÇÃO E IDIOMA -->
+    <script>
+        const LOCAL_INDEX_VERSION = "0.8.0";
+        const GITHUB_REPO_URL = "https://github.com/luis0s1/playhub";
+        const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/luis0s1/playhub/main/";
+        const OFFICIAL_SITE_URL = "https://luis0s1.github.io/playhub/";
+        const LINKTREE_LUIS0S1 = "https://linktr.ee/Luis0s1";
+        const ICON_PATH = "icons/icon.png";
+
+        const REQUIRED_FILES = [
+            "manifest.json",
+            "style.css",
+            "icons-catalog.js",
+            "background.js",
+            "sites.js",
+            "i18n.js",
+            "script.js",
+            "gerar_icones.py",
+            "sites.js",
+            "sites/ai.js", 
+            "sites/apps.js", 
+            "sites/audio.js", 
+            "sites/design.js", 
+            "sites/dev.js", 
+            "sites/games.js", 
+            "sites/movies-&-series.js", 
+            "sites/others.js", 
+            "sites/productivity.js", 
+            "sites/video.js"
+        ];
+
+        let missingFiles = [];
+        let targetUrlToOpen = "";
+
+        // Auto-detecção de Idioma
+        function detectLanguage() {
+            const userLang = navigator.language || navigator.userLanguage;
+            return userLang.startsWith('pt') ? 'pt-BR' : 'en';
+        }
+
+        // Verificação de Arquivos e Estrutura de Pastas
+        async function runSystemCheck() {
+            const statusMsg = document.getElementById('loader-status');
+            const missingBox = document.getElementById('loader-missing-box');
+            const actionBtns = document.getElementById('loader-actions');
+            const spinner = document.getElementById('loader-spinner');
+
+            missingFiles = [];
+
+            // Testa ícone da pasta local
+            try {
+                const iconRes = await fetch(`./${ICON_PATH}`);
+                if (!iconRes.ok) missingFiles.push("Pasta/arquivo: icones/icon.png");
+            } catch (e) {
+                missingFiles.push("Pasta/arquivo: icones/icon.png");
+            }
+
+            // Testa arquivos da raiz
+            for (const fileName of REQUIRED_FILES) {
+                try {
+                    const localRes = await fetch(`./${fileName}`);
+                    if (!localRes.ok) missingFiles.push(`Arquivo: ${fileName}`);
+                } catch (e) {
+                    missingFiles.push(`Arquivo: ${fileName}`);
+                }
+            }
+
+            // Se nada estiver faltando localmente, libera a página normalmente
+            if (missingFiles.length === 0) {
+                hideLoadingScreen();
+                return;
+            }
+
+            // Caso faltem arquivos JS, tenta buscar do GitHub RAW
+            if (statusMsg) statusMsg.innerText = `Buscando ${missingFiles.length} item(ns) pendente(s) da nuvem...`;
+
+            let downloadedCount = 0;
+            const missingScripts = missingFiles
+                .filter(item => item.startsWith("Arquivo: "))
+                .map(item => item.replace("Arquivo: ", ""))
+                .filter(file => file.endsWith(".js"));
+
+            for (const fileName of missingScripts) {
+                try {
+                    const remoteRes = await fetch(`${GITHUB_RAW_BASE}${encodeURIComponent(fileName)}`);
+                    if (remoteRes.ok) {
+                        const code = await remoteRes.text();
+                        const script = document.createElement('script');
+                        script.text = code;
+                        document.head.appendChild(script);
+                        downloadedCount++;
+                    }
+                } catch (err) {
+                    console.error(`[PlayHub] Erro ao buscar ${fileName} do GitHub.`, err);
+                }
+            }
+
+            // Se conseguiu baixar tudo ou parcialmente, oculta o loader após uma checagem rápida
+            if (downloadedCount > 0 && downloadedCount >= missingScripts.length) {
+                hideLoadingScreen();
+            } else {
+                if (spinner) spinner.style.display = 'none';
+                if (statusMsg) statusMsg.innerText = "Alguns arquivos locais não foram encontrados. Você pode abrir o site oficial ou continuar.";
+                if (missingBox) {
+                    missingBox.innerHTML = missingFiles.map(f => `<div>• ${f}</div>`).join('');
+                    missingBox.style.display = 'block';
+                }
+                if (actionBtns) actionBtns.style.display = 'flex';
+            }
+        }
+
+        function hideLoadingScreen() {
+            const screen = document.getElementById('loading-screen-overlay');
+            if (screen) {
+                screen.style.opacity = '0';
+                screen.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => screen.style.display = 'none', 300);
+            }
+        }
+
+        // Modal para escolher se abre link em nova aba ou na mesma
+        function promptOpenSite(url) {
+            targetUrlToOpen = url;
+            const modal = document.getElementById('openSiteModal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function confirmOpenSite(newTab) {
+            const modal = document.getElementById('openSiteModal');
+            if (modal) modal.style.display = 'none';
+            if (!targetUrlToOpen) return;
+
+            if (newTab) {
+                window.open(targetUrlToOpen, '_blank');
+            } else {
+                window.location.href = targetUrlToOpen;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentLang = detectLanguage();
+            console.log(`[PlayHub] Idioma ativo: ${currentLang}`);
+            runSystemCheck();
+            initKeyboardNavigation();
+        });
+
+        // Navegação por teclado (WASD / Setas / Espaço / Enter)
+        let focusedIndex = -1;
+        function initKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+                const cards = document.querySelectorAll('#grid-container .card, .grid .card');
+                if (cards.length === 0) return;
+
+                if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+
+                const key = e.key.toLowerCase();
+                if (['arrowright', 'd'].includes(key)) {
+                    focusedIndex = (focusedIndex + 1) % cards.length;
+                    updateFocus(cards);
+                } else if (['arrowleft', 'a'].includes(key)) {
+                    focusedIndex = (focusedIndex - 1 + cards.length) % cards.length;
+                    updateFocus(cards);
+                } else if (['arrowdown', 's'].includes(key)) {
+                    focusedIndex = Math.min(focusedIndex + 4, cards.length - 1);
+                    updateFocus(cards);
+                } else if (['arrowup', 'w'].includes(key)) {
+                    focusedIndex = Math.max(focusedIndex - 4, 0);
+                    updateFocus(cards);
+                } else if (e.code === 'Space' || key === 'enter') {
+                    e.preventDefault();
+                    if (focusedIndex >= 0 && cards[focusedIndex]) {
+                        const link = cards[focusedIndex].querySelector('a');
+                        if (link) promptOpenSite(link.href);
+                    }
+                }
+            });
+        }
+
+        function updateFocus(cards) {
+            cards.forEach(c => c.classList.remove('keyboard-focused'));
+            if (focusedIndex >= 0 && cards[focusedIndex]) {
+                cards[focusedIndex].classList.add('keyboard-focused');
+                cards[focusedIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+    </script>
+
+    <script src="icons-catalog.js"></script>
     <script src="boot.js"></script>
 </head>
 <body class="system-mode">
+
+    <!-- ============ TELA DE CARREGAMENTO / RESILIÊNCIA ============ -->
+    <div id="loading-screen-overlay">
+        <div class="loader-card">
+            <div id="loader-spinner" class="spinner-loader"></div>
+            <h2 class="loader-title">PlayHub</h2>
+            <p id="loader-status" class="loader-msg">Verificando arquivos e componentes do sistema...</p>
+            <div id="loader-missing-box" class="missing-list" style="display: none;"></div>
+            <div id="loader-actions" class="loader-btns" style="display: none;">
+                <button class="btn-loader btn-loader-main" onclick="window.open(OFFICIAL_SITE_URL, '_blank')">Abrir Site Oficial</button>
+                <button class="btn-loader btn-loader-sec" onclick="window.open(GITHUB_REPO_URL, '_blank')">Abrir Repositório</button>
+                <button class="btn-loader btn-loader-continue" onclick="hideLoadingScreen()">Continuar Mesmo Assim</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ MODAL PARA ESCOLHER MODO DE ABERTURA ============ -->
+    <div id="openSiteModal" class="open-modal">
+        <div class="open-modal-content">
+            <h3>Abrir Link</h3>
+            <p style="font-size: 13px; color: #94a3b8; margin-bottom: 16px;">Como você deseja abrir este site?</p>
+            <div style="display: flex; gap: 8px; justify-content: center;">
+                <button class="btn-loader btn-loader-sec" onclick="confirmOpenSite(false)">Nesta Aba</button>
+                <button class="btn-loader btn-loader-main" onclick="confirmOpenSite(true)">Em Nova Aba</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ============ Barra lateral (computador) ============ -->
     <nav id="sidebar" class="sidebar glass" aria-label="PlayHub">
         <div class="sidebar-top">
             <button class="sidebar-brand" id="brand-toggle" type="button">
-                <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 100 100"><polygon points="56,8 24,54 46,54 40,92 76,42 53,42"/></svg></span>
+                <span class="brand-icon" aria-hidden="true" data-icon="github_octo"><svg viewBox="0 0 100 100"><polygon points="56,8 24,54 46,54 40,92 76,42 53,42"/></svg></span>
                 <span class="brand-name">PlayHub</span>
             </button>
 
             <button id="btn-nav-home" class="nav-btn filter-btn active" data-cat="todos" type="button">
-                <span class="icon" aria-hidden="true">🏠</span>
+                <span class="icon" aria-hidden="true" data-icon="inicio">🏠</span>
                 <span class="nav-label" data-i18n="inicio">Início</span>
             </button>
 
             <button id="btn-nav-criados" class="nav-btn filter-btn" data-cat="criados" type="button">
-                <span class="icon" aria-hidden="true">🗃</span>
+                <span class="icon" aria-hidden="true" data-icon="criados">🗃</span>
                 <span class="nav-label" data-i18n="criados">Criados</span>
             </button>
 
             <button id="btn-nav-favs" class="nav-btn filter-btn" data-cat="favoritos" type="button">
-                <span class="icon" aria-hidden="true">⭐</span>
+                <span class="icon" aria-hidden="true" data-icon="favoritos">⭐</span>
                 <span class="nav-label" data-i18n="favoritos">Favoritos</span>
             </button>
 
             <button id="btn-open-create" class="nav-btn nav-btn-add" type="button">
-                <span class="icon" aria-hidden="true">➕</span>
+                <span class="icon" aria-hidden="true" data-icon="criar">➕</span>
                 <span class="nav-label" data-i18n="criar_botao">Criar Link</span>
             </button>
 
             <button id="btn-multi-select" class="nav-btn" type="button">
-                <span class="icon" aria-hidden="true">☑️</span>
+                <span class="icon" aria-hidden="true" data-icon="selecionar">☑️</span>
                 <span class="nav-label" data-i18n="selecionar_varios">Selecionar Vários</span>
             </button>
 
             <button id="btn-open-settings" class="nav-btn" type="button">
-                <span class="icon" aria-hidden="true">⚙️</span>
+                <span class="icon" aria-hidden="true" data-icon="ajustes">⚙️</span>
                 <span class="nav-label" data-i18n="configuracoes">Ajustes</span>
             </button>
 
             <button id="btn-device-info" class="nav-btn" type="button">
-                <span class="icon" aria-hidden="true">💻</span>
+                <span class="icon" aria-hidden="true" data-icon="dispositivo">💻</span>
                 <span class="nav-label" data-i18n="info_aparelho">Info Aparelho</span>
             </button>
 
@@ -71,9 +344,9 @@
 
         <div class="sidebar-footer">
             <div class="credits-box">
+                <a href="https://luis0s1.github.io/playhub/" target="_blank" rel="noopener">🌐 Site Oficial</a>
+                <a href="https://github.com/luis0s1/playhub" target="_blank" rel="noopener">💻 Repositório GitHub</a>
                 <a href="https://linktr.ee/Luis0s1" target="_blank" rel="noopener">🔗 Luis0s1</a>
-                <a href="https://linktr.ee/Luis__0s1" target="_blank" rel="noopener">🔗 Luis__0s1</a>
-                <a href="https://www.youtube.com/@luis_0s1" target="_blank" rel="noopener">▶ YouTube</a>
             </div>
         </div>
     </nav>
@@ -82,31 +355,34 @@
     <main id="main-content" class="main-content">
         <header class="header glass" id="app-header">
             <div class="header-brand">
-                <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 100 100"><polygon points="56,8 24,54 46,54 40,92 76,42 53,42"/></svg></span>
+                <span class="brand-icon" aria-hidden="true" data-icon="zero_portal"><svg viewBox="0 0 100 100"><polygon points="56,8 24,54 46,54 40,92 76,42 53,42"/></svg></span>
                 <h1>PlayHub</h1>
             </div>
 
             <div class="header-search" id="header-search" role="search">
-                <span class="search-ico" aria-hidden="true">🔎</span>
+                <span class="search-ico" aria-hidden="true" data-icon="busca">🔎</span>
                 <input type="search" id="search-input" autocomplete="off" spellcheck="false"
                        placeholder="Pesquisar site..." data-i18n-ph="pesquisar" data-i18n-aria="pesquisar">
                 <button id="btn-search-close" class="icon-btn mobile-only" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
             </div>
 
             <div id="normal-header-actions" class="header-actions">
-                <button id="btn-search-open" class="icon-btn mobile-only" type="button" data-i18n-aria="pesquisar" aria-label="Pesquisar">🔎</button>
+                <button id="btn-search-open" class="icon-btn mobile-only" type="button" data-i18n-aria="pesquisar" aria-label="Pesquisar" data-icon="busca">🔎</button>
                 <button id="btn-install-top" class="btn-theme-pill install-btn hidden" type="button">
                     <span aria-hidden="true">⬇️</span> <span data-i18n="instalar_app">Instalar app</span>
                 </button>
-                <select id="lang-selector" class="btn-theme-pill" data-i18n-aria="idioma" aria-label="Idioma"></select>
+                <select id="lang-selector" class="btn-theme-pill" data-i18n-aria="idioma" aria-label="Idioma">
+                    <option value="pt-BR">Português (BR)</option>
+                    <option value="en">English</option>
+                </select>
                 <button id="theme-toggle" class="icon-btn" type="button" data-i18n-aria="tema" aria-label="Tema">🌙</button>
-                <button id="btn-settings-top" class="icon-btn mobile-only" type="button" data-i18n-aria="configuracoes" aria-label="Ajustes">⚙️</button>
+                <button id="btn-settings-top" class="icon-btn mobile-only" type="button" data-i18n-aria="configuracoes" aria-label="Ajustes" data-icon="ajustes">⚙️</button>
             </div>
 
             <div id="selection-header-actions" class="header-actions hidden">
                 <span id="selection-count-label" class="selection-count">0</span>
-                <button id="btn-sel-fav" class="btn-theme-pill" type="button"><span aria-hidden="true">⭐</span> <span data-i18n="favoritar">Favoritar</span></button>
-                <button id="btn-sel-del" class="btn-theme-pill danger" type="button"><span aria-hidden="true">🗑️</span> <span data-i18n="apagar_ocultar">Apagar/Ocultar</span></button>
+                <button id="btn-sel-fav" class="btn-theme-pill" type="button"><span aria-hidden="true" data-icon="favoritos">⭐</span> <span data-i18n="favoritar">Favoritar</span></button>
+                <button id="btn-sel-del" class="btn-theme-pill danger" type="button"><span aria-hidden="true" data-icon="apagar">🗑️</span> <span data-i18n="apagar_ocultar">Apagar/Ocultar</span></button>
                 <button id="btn-sel-cancel" class="btn-theme-pill" type="button"><span aria-hidden="true">✖</span> <span data-i18n="cancelar">Cancelar</span></button>
             </div>
         </header>
@@ -114,26 +390,26 @@
         <div id="grid-container" class="grid-container"></div>
 
         <footer class="footer-credits">
-            <p>⚡ PlayHub | <span data-i18n="direitos">Todos os direitos reservados</span></p>
+            <p>⚡ PlayHub | <a href="https://luis0s1.github.io/playhub/" target="_blank" style="color: #38bdf8;">Site Oficial</a> | <a href="https://github.com/luis0s1/playhub" target="_blank" style="color: #38bdf8;">GitHub</a></p>
         </footer>
     </main>
 
     <!-- ============ Navegação de baixo (celular) ============ -->
     <nav id="bottom-nav" class="bottom-nav glass" aria-label="PlayHub">
         <button class="bn-btn filter-btn active" data-cat="todos" type="button">
-            <span class="bn-ico" aria-hidden="true">🏠</span><span class="bn-label" data-i18n="inicio">Início</span>
+            <span class="bn-ico" aria-hidden="true" data-icon="inicio">🏠</span><span class="bn-label" data-i18n="inicio">Início</span>
         </button>
         <button class="bn-btn filter-btn" data-cat="criados" type="button">
-            <span class="bn-ico" aria-hidden="true">🗃</span><span class="bn-label" data-i18n="criados">Criados</span>
+            <span class="bn-ico" aria-hidden="true" data-icon="criados">🗃</span><span class="bn-label" data-i18n="criados">Criados</span>
         </button>
         <button class="bn-btn filter-btn" data-cat="favoritos" type="button">
-            <span class="bn-ico" aria-hidden="true">⭐</span><span class="bn-label" data-i18n="favoritos">Favoritos</span>
+            <span class="bn-ico" aria-hidden="true" data-icon="favoritos">⭐</span><span class="bn-label" data-i18n="favoritos">Favoritos</span>
         </button>
         <button id="bn-create" class="bn-btn bn-create" type="button">
-            <span class="bn-ico" aria-hidden="true">➕</span><span class="bn-label" data-i18n="criar">Criar</span>
+            <span class="bn-ico" aria-hidden="true" data-icon="criar">➕</span><span class="bn-label" data-i18n="criar">Criar</span>
         </button>
         <button id="bn-menu" class="bn-btn" type="button" aria-haspopup="dialog">
-            <span class="bn-ico" aria-hidden="true">☰</span><span class="bn-label" data-i18n="menu">Menu</span>
+            <span class="bn-ico" aria-hidden="true" data-icon="menu">☰</span><span class="bn-label" data-i18n="menu">Menu</span>
         </button>
     </nav>
 
@@ -147,15 +423,15 @@
         <div class="sheet-body">
             <div id="mobile-categories" class="mobile-cat-grid"></div>
             <div class="sheet-actions">
-                <button id="mm-select" class="sheet-row" type="button"><span class="ico" aria-hidden="true">☑️</span><span data-i18n="selecionar_varios">Selecionar Vários</span></button>
-                <button id="mm-device" class="sheet-row" type="button"><span class="ico" aria-hidden="true">💻</span><span data-i18n="info_aparelho">Info Aparelho</span></button>
+                <button id="mm-select" class="sheet-row" type="button"><span class="ico" aria-hidden="true" data-icon="selecionar">☑️</span><span data-i18n="selecionar_varios">Selecionar Vários</span></button>
+                <button id="mm-device" class="sheet-row" type="button"><span class="ico" aria-hidden="true" data-icon="dispositivo">💻</span><span data-i18n="info_aparelho">Info Aparelho</span></button>
                 <button id="btn-install-menu" class="sheet-row install-btn hidden" type="button"><span class="ico" aria-hidden="true">⬇️</span><span data-i18n="instalar_app">Instalar app</span></button>
-                <button id="mm-settings" class="sheet-row" type="button"><span class="ico" aria-hidden="true">⚙️</span><span data-i18n="configuracoes">Ajustes</span></button>
+                <button id="mm-settings" class="sheet-row" type="button"><span class="ico" aria-hidden="true" data-icon="ajustes">⚙️</span><span data-i18n="configuracoes">Ajustes</span></button>
             </div>
             <div class="credits-box credits-row">
+                <a href="https://luis0s1.github.io/playhub/" target="_blank" rel="noopener">🌐 Site Oficial</a>
+                <a href="https://github.com/luis0s1/playhub" target="_blank" rel="noopener">💻 Repositório GitHub</a>
                 <a href="https://linktr.ee/Luis0s1" target="_blank" rel="noopener">🔗 Luis0s1</a>
-                <a href="https://linktr.ee/Luis__0s1" target="_blank" rel="noopener">🔗 Luis__0s1</a>
-                <a href="https://www.youtube.com/@luis_0s1" target="_blank" rel="noopener">▶ YouTube</a>
             </div>
         </div>
     </div>
@@ -163,13 +439,13 @@
     <!-- ============ Menu de contexto ============ -->
     <div id="custom-context-menu" class="context-menu hidden glass" role="menu">
         <button id="ctx-open" type="button" role="menuitem"><span aria-hidden="true">🚀</span> <span data-i18n="abrir">Abrir</span></button>
-        <button id="ctx-fav" type="button" role="menuitem"><span aria-hidden="true">⭐</span> <span data-i18n="favoritar">Favoritar</span></button>
-        <button id="ctx-edit" type="button" role="menuitem"><span aria-hidden="true">✏️</span> <span data-i18n="editar">Editar</span></button>
-        <button id="ctx-copy" type="button" role="menuitem"><span aria-hidden="true">📋</span> <span data-i18n="copiar_link">Copiar Link</span></button>
-        <button id="ctx-share" type="button" role="menuitem"><span aria-hidden="true">🔗</span> <span data-i18n="compartilhar">Compartilhar</span></button>
+        <button id="ctx-fav" type="button" role="menuitem"><span aria-hidden="true" data-icon="favoritos">⭐</span> <span data-i18n="favoritar">Favoritar</span></button>
+        <button id="ctx-edit" type="button" role="menuitem"><span aria-hidden="true" data-icon="editar">✏️</span> <span data-i18n="editar">Editar</span></button>
+        <button id="ctx-copy" type="button" role="menuitem"><span aria-hidden="true" data-icon="copiar">📋</span> <span data-i18n="copiar_link">Copiar Link</span></button>
+        <button id="ctx-share" type="button" role="menuitem"><span aria-hidden="true" data-icon="compartilhar">🔗</span> <span data-i18n="compartilhar">Compartilhar</span></button>
         <button id="ctx-check" type="button" role="menuitem"><span aria-hidden="true">📡</span> <span data-i18n="verificar_status">Verificar Status</span></button>
-        <button id="ctx-select" type="button" role="menuitem"><span aria-hidden="true">☑️</span> <span data-i18n="selecionar">Selecionar</span></button>
-        <button id="ctx-delete" class="danger" type="button" role="menuitem"><span aria-hidden="true">🗑️</span> <span data-i18n="apagar_ocultar">Apagar / Ocultar</span></button>
+        <button id="ctx-select" type="button" role="menuitem"><span aria-hidden="true" data-icon="selecionar">☑️</span> <span data-i18n="selecionar">Selecionar</span></button>
+        <button id="ctx-delete" class="danger" type="button" role="menuitem"><span aria-hidden="true" data-icon="apagar">🗑️</span> <span data-i18n="apagar_ocultar">Apagar / Ocultar</span></button>
     </div>
 
     <!-- ============ Painel de detalhes ============ -->
@@ -190,10 +466,10 @@
                 <p id="panel-url" class="panel-url-text"></p>
                 <div class="panel-actions-grid">
                     <button id="btn-panel-launch" class="btn-action btn-action-launch" type="button"><span aria-hidden="true">🚀</span> <span data-i18n="abrir">Abrir</span></button>
-                    <button id="btn-panel-fav" class="btn-action" type="button"><span aria-hidden="true">⭐</span> <span data-i18n="favoritar">Favoritar</span></button>
-                    <button id="btn-panel-copy" class="btn-action" type="button"><span aria-hidden="true">📋</span> <span data-i18n="copiar_link">Copiar Link</span></button>
-                    <button id="btn-panel-share" class="btn-action" type="button"><span aria-hidden="true">🔗</span> <span data-i18n="compartilhar">Compartilhar</span></button>
-                    <button id="btn-panel-search" class="btn-action" type="button"><span aria-hidden="true">🔍</span> <span data-i18n="pesquisar_web">Pesquisar Web</span></button>
+                    <button id="btn-panel-fav" class="btn-action" type="button"><span aria-hidden="true" data-icon="favoritos">⭐</span> <span data-i18n="favoritar">Favoritar</span></button>
+                    <button id="btn-panel-copy" class="btn-action" type="button"><span aria-hidden="true" data-icon="copiar">📋</span> <span data-i18n="copiar_link">Copiar Link</span></button>
+                    <button id="btn-panel-share" class="btn-action" type="button"><span aria-hidden="true" data-icon="compartilhar">🔗</span> <span data-i18n="compartilhar">Compartilhar</span></button>
+                    <button id="btn-panel-search" class="btn-action" type="button"><span aria-hidden="true" data-icon="busca">🔍</span> <span data-i18n="pesquisar_web">Pesquisar Web</span></button>
                     <button id="btn-panel-check" class="btn-action" type="button"><span aria-hidden="true">📡</span> <span data-i18n="verificar">Verificar</span></button>
                 </div>
             </div>
@@ -203,7 +479,7 @@
     <!-- ============ Modal Criar / Editar ============ -->
     <div id="create-modal" class="modal glass hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div class="modal-header">
-            <h2 id="modal-title"><span aria-hidden="true">➕</span> <span id="modal-title-text" data-i18n="criar_botao">Criar Link</span></h2>
+            <h2 id="modal-title"><span aria-hidden="true" data-icon="criar">➕</span> <span id="modal-title-text" data-i18n="criar_botao">Criar Link</span></h2>
             <button id="close-create" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
         </div>
         <div class="modal-body">
@@ -247,7 +523,7 @@
     <!-- ============ Modal Ajustes ============ -->
     <div id="settings-modal" class="modal glass hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
         <div class="modal-header">
-            <h2 id="settings-title"><span aria-hidden="true">⚙️</span> <span data-i18n="configuracoes">Ajustes</span></h2>
+            <h2 id="settings-title"><span aria-hidden="true" data-icon="ajustes">⚙️</span> <span data-i18n="configuracoes">Ajustes</span></h2>
             <button id="close-settings" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
         </div>
         <div class="modal-body settings-scroll">
@@ -259,6 +535,18 @@
                     <option value="light-mode" data-i18n="tema_claro">Claro</option>
                 </select>
             </div>
+            
+            <!-- Estilo dos Ícones do Sistema -->
+            <div class="setting-item">
+                <label for="pref-icon-style-select">Estilo dos Ícones</label>
+                <select id="pref-icon-style-select" class="btn-theme-pill" onchange="if(window.changeIconStyle) window.changeIconStyle(this.value)">
+                    <option value="image">Imagens Locais (.webp/.png)</option>
+                    <option value="svgColor">SVG Colorido / Detalhado</option>
+                    <option value="svgSimple">SVG Simples / Monocromático</option>
+                    <option value="emoji">Emojis Nativos</option>
+                </select>
+            </div>
+
             <div class="setting-item">
                 <label for="pref-lang-select" data-i18n="idioma">Idioma</label>
                 <select id="pref-lang-select" class="btn-theme-pill"></select>
@@ -306,7 +594,7 @@
     <!-- ============ Modal Informações do Aparelho ============ -->
     <div id="device-modal" class="modal glass hidden" role="dialog" aria-modal="true" aria-labelledby="device-title">
         <div class="modal-header">
-            <h2 id="device-title"><span aria-hidden="true">💻</span> <span data-i18n="info_aparelho">Info Aparelho</span></h2>
+            <h2 id="device-title"><span aria-hidden="true" data-icon="dispositivo">💻</span> <span data-i18n="info_aparelho">Info Aparelho</span></h2>
             <button id="close-device" class="close-btn" type="button" data-i18n-aria="fechar" aria-label="Fechar">✖</button>
         </div>
         <div class="modal-body settings-scroll" id="device-info-content"></div>
@@ -347,10 +635,22 @@
     <div id="backdrop" class="backdrop hidden"></div>
     <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
+    <!-- ============ SCRIPTS DOS DADOS DAS CATEGORIAS (DENTRO DA PASTA SITES) ============ -->
+    <script src="sites/ai.js"></script>
+    <script src="sites/apps.js"></script>
+    <script src="sites/audio.js"></script>
+    <script src="sites/design.js"></script>
+    <script src="sites/dev.js"></script>
+    <script src="sites/games.js"></script>
+    <script src="sites/filmes-e-series.js"></script> <!-- Lembre-se de renomear o arquivo sem espaço/acento -->
+    <script src="sites/outros.js"></script>
+    <script src="sites/produtividade.js"></script>
+    <script src="sites/video.js"></script>
+
+    <!-- ============ SCRIPTS PRINCIPAIS DO SISTEMA ============ -->
     <script src="sites.js"></script>
     <script src="i18n.js"></script>
     <script src="script.js"></script>
     <script src="bubble.js" defer></script>
 </body>
 </html>
-
