@@ -1512,9 +1512,10 @@ const GAMES_SITES = [
     "iconData": "https://games.lauta.site/banners/tekken.jpg"
  },
  {
-    "name": "gauzz.notion.site",    "url": "https://gauzz.notion.site/Jogos-de-navegador-40969fd917ec80d0919bfc58342d2432",
+    "name": "gauzz.notion.site",    
+    "url": "https://gauzz.notion.site/Jogos-de-navegador-40969fd917ec80d0919bfc58342d2432",
     "description": "Ferramenta online.",
-    "category": "apps",
+    "category": "jogos",
     "tags": [
       "Web"
     ]
@@ -1523,7 +1524,7 @@ const GAMES_SITES = [
     "name": "Is-agentic",
     "url": "https://is-agentic.com",
     "domain": "is-agentic.com",
-    "category": "apps",
+    "category": "jogos",
     "price": "free",
     "description": "Ferramenta online.",
     "tags": [
@@ -1535,7 +1536,7 @@ const GAMES_SITES = [
     "name": "Fiveplay",
     "url": "https://fiveplay.lol",
     "domain": "fiveplay.lol",
-    "category": "apps",
+    "category": "jogos",
     "price": "free",
     "description": "Ferramenta online.",
     "tags": [
@@ -1547,7 +1548,7 @@ const GAMES_SITES = [
     "name": "Nfsu2",
     "url": "https://nfsu2.xyz",
     "domain": "nfsu2.xyz",
-    "category": "apps",
+    "category": "jogos",
     "price": "free",
     "description": "Ferramenta online.",
     "tags": [
@@ -1559,7 +1560,7 @@ const GAMES_SITES = [
     "name": "Mk9",
     "url": "https://mk9.lauta.site/",
     "domain": "mk9.lauta.site",
-    "category": "apps",
+    "category": "jogos",
     "price": "free",
     "description": "Ferramenta online.",
     "tags": [
@@ -1571,12 +1572,71 @@ const GAMES_SITES = [
     "name": "Quiverlauncher",
     "url": "https://quiverlauncher.com",
     "domain": "quiverlauncher.com",
-    "category": "apps",
+    "category": "jogos",
     "price": "free",
     "description": "Ferramenta online.",
     "tags": [
       "Web"
     ],
     "iconData": ""
+  },
+  {
+    "id": "c_vnh3y7",
+    "name": "gauzz.notion.site",
+    "url": "https://gauzz.notion.site/Jogos-de-navegador-40969fd917ec80d0919bfc58342d2432",
+    "category": "jogos",
+    "description": "Ferramenta online.",
+    "iconData": ""
+  },
+  {
+    "id": "c_47z41",
+    "name": "Is-agentic",
+    "url": "https://is-agentic.com",
+    "category": "jogos",
+    "description": "Ferramenta online.",
+    "iconData": ""
+  },
+  {
+    "id": "c_13k93qd",
+    "name": "Fiveplay",
+    "url": "https://fiveplay.lol",
+    "category": "jogos",
+    "description": "Ferramenta online.",
+    "iconData": ""
+  },
+  {
+    "id": "c_r4h1lj",
+    "name": "Nfsu2",
+    "url": "https://nfsu2.xyz",
+    "category": "jogos",
+    "description": "Ferramenta online.",
+    "iconData": ""
+  },
+  {
+    "id": "c_157hjy0",
+    "name": "Mk9",
+    "url": "https://mk9.lauta.site/",
+    "category": "jogos",
+    "description": "Ferramenta online.",
+    "iconData": ""
+  },
+  {
+    "id": "c_yobw0b",
+    "name": "Quiverlauncher",
+    "url": "https://quiverlauncher.com",
+    "category": "jogos",
+    "description": "Ferramenta online.",
+    "iconData": ""
+  },
+  {
+    "id": "c_mw77uz1squl3",
+    "name": "Gran Turismo 4",
+    "url": "https://granturismo4.online/",
+    "category": "jogos",
+    "description": "Jogo de corrida eletrizante Gran Turismo 4.",
+    "iconData": "",
+    "origUrl": "https://granturismo4.online/"
   }
 ];
+
+ 
