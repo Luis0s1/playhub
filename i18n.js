@@ -137,3 +137,5 @@ function applyTranslations() {
         el.placeholder = t(k);
     });
 }
+
+ 

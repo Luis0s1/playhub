@@ -14,7 +14,7 @@ const SITES_FILES_MAP = {
   audio: { path: 'sites/audio.js', version: '0.8.0.01' },
   design: { path: 'sites/design.js', version: '0.8.0.01' },
   dev: { path: 'sites/dev.js', version: '0.8.0.01' },
-  games: { path: 'sites/games.js', version: '0.8.0.01' },
+  games: { path: 'sites/games.js', version: '0.8.0.02' },
   movies: { path: 'sites/movies-&-series.js', version: '0.8.0.01' },
   others: { path: 'sites/others.js', version: '0.8.0.01' },
   productivity: { path: 'sites/productivity.js', version: '0.8.0.01' },
@@ -134,3 +134,5 @@ if (typeof window !== 'undefined') {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { PLAYHUB_SITES_VERSION, SITES_FILES_MAP, getAllSites, getSitesByCategory, searchSites };
 }
+
+ 

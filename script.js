@@ -18,12 +18,12 @@ const KEYS = {
 };
 
 const DEFAULT_PREFS = {
-    theme: 'system-mode', lang: 'auto', gridCols: 6, miniMenu: false, forceMobile: false,
-    blur: true, sound: true, images: true, names: true, desc: true, dots: true, checkOnOpen: true,
-    bubble: false, openMode: 'tab', iconStyle: 'image'
-};
-const TOGGLE_KEYS = ['bubble', 'miniMenu', 'forceMobile', 'blur', 'sound', 'images', 'names', 'desc', 'dots', 'checkOnOpen'];
-const BACKUP_PREF_KEYS = ['theme', 'lang', 'gridCols', 'miniMenu', 'forceMobile', 'blur', 'sound', 'images', 'names', 'desc', 'dots', 'checkOnOpen', 'iconStyle'];
+        theme: 'system-mode', lang: 'auto', gridCols: 6, miniMenu: false, forceMobile: false,
+            blur: true, sound: true, images: true, names: true, desc: true, dots: true, checkOnOpen: true,
+                bubble: false, openMode: 'tab', iconStyle: 'image'
+                };
+                const TOGGLE_KEYS = ['bubble', 'miniMenu', 'forceMobile', 'blur', 'sound', 'images', 'names', 'desc', 'dots', 'checkOnOpen'];
+                const BACKUP_PREF_KEYS = ['theme', 'lang', 'gridCols', 'miniMenu', 'forceMobile', 'blur', 'sound', 'images', 'names', 'desc', 'dots', 'checkOnOpen', 'iconStyle'];
 
 const CATEGORY_ORDER = ['jogos', 'filmes', 'ia', 'video', 'design', 'audio', 'aplicativos', 'produtividade', 'dev', 'servidor', 'outros'];
 const CATEGORY_ICONS = {
@@ -303,13 +303,23 @@ function syncBubbleLabel() {
     }
 }
 
-function updateSettingsUI() {
-    const setVal = (id, v) => { const el = $(id); if (el) el.value = v; };
-    setVal('pref-theme-select', prefs.theme);
-    setVal('pref-gridCols', clampCols(prefs.gridCols));
-    setVal('pref-openMode', prefs.openMode);
-    setVal('pref-lang-select', prefs.lang || 'auto');
-    setVal('lang-selector', prefs.lang || 'auto');
+// Função global para troca dinâmica do estilo dos ícones
+window.changeIconStyle = function(style) {
+    prefs.iconStyle = style || 'image';
+        persistPrefs();
+            applyPreferences();
+                renderPage();
+                };
+
+                function updateSettingsUI() {
+                    const setVal = (id, v) => { const el = $(id); if (el) el.value = v; };
+                        setVal('pref-theme-select', prefs.theme);
+                            setVal('pref-icon-style-select', prefs.iconStyle || 'image');
+                                setVal('pref-gridCols', clampCols(prefs.gridCols));
+                                    setVal('pref-openMode', prefs.openMode);
+                                        setVal('pref-lang-select', prefs.lang || 'auto');
+                                            setVal('lang-selector', prefs.lang || 'auto');
+
 
     TOGGLE_KEYS.forEach(key => {
         const chk = $(`pref-${key}`);
@@ -605,36 +615,56 @@ function getDomain(site) {
 }
 
 function renderIcon(container, site) {
-    container.innerHTML = '';
+        container.innerHTML = '';
+            const currentStyle = prefs.iconStyle || 'image';
 
-    const emoji = (typeof site.iconData === 'string' && site.iconData && !isImageSource(site.iconData)) ? site.iconData : '';
-    if (emoji) { container.appendChild(makeLetterTile(emoji, site.name, true)); return; }
+                if (currentStyle === 'emoji') {
+                        const catEmoji = CATEGORY_ICONS[site.category] || '🌐';
+                                container.appendChild(makeLetterTile(catEmoji, site.name, true));
+                                        return;
+                                            }
 
-    const domain = getDomain(site);
-    const sources = [
-        isImageSource(site.iconData) ? site.iconData : null,
-        site.imagem,
-        domain ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128` : null,
-        domain ? `https://icons.duckduckgo.com/ip3/${domain}.ico` : null,
-        domain ? `https://${domain}/favicon.ico` : null
-    ].filter(Boolean);
+                                                const emoji = (typeof site.iconData === 'string' && site.iconData && !isImageSource(site.iconData)) ? site.iconData : '';
+                                                    if (emoji) { 
+                                                            container.appendChild(makeLetterTile(emoji, site.name, true)); 
+                                                                    return; 
+                                                                        }
 
-    const img = document.createElement('img');
-    img.alt = '';
-    img.decoding = 'async';
-    img.loading = 'lazy';
-    img.referrerPolicy = 'no-referrer';
-    let step = 0;
-    const tryNext = () => {
-        if (step < sources.length) img.src = sources[step++];
-        else container.replaceChildren(makeLetterTile((site.name || 'P').trim().charAt(0).toUpperCase() || 'P', site.name, false));
-    };
-    img.addEventListener('error', tryNext);
-    img.addEventListener('load', () => { if (img.naturalWidth && img.naturalWidth < 20 && step < sources.length) tryNext(); });
-    container.appendChild(img);
-    tryNext();
-}
+                                                                            if (currentStyle === 'svgSimple') {
+                                                                                    const initial = (site.name || 'P').trim().charAt(0).toUpperCase() || 'P';
+                                                                                            container.appendChild(makeLetterTile(initial, site.name, false));
+                                                                                                    return;
+                                                                                                        }
 
+                                                                                                            const domain = getDomain(site);
+                                                                                                                const sources = [
+                                                                                                                        isImageSource(site.iconData) ? site.iconData : null,
+                                                                                                                                site.imagem,
+                                                                                                                                        site.icon,
+                                                                                                                                                domain ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128` : null,
+                                                                                                                                                        domain ? `https://icons.duckduckgo.com/ip3/${domain}.ico` : null
+                                                                                                                                                            ].filter(Boolean);
+
+                                                                                                                                                                const img = document.createElement('img');
+                                                                                                                                                                    img.alt = site.name || '';
+                                                                                                                                                                        img.decoding = 'async';
+                                                                                                                                                                            img.loading = 'lazy';
+                                                                                                                                                                                img.referrerPolicy = 'no-referrer';
+                                                                                                                                                                                    
+                                                                                                                                                                                        if (currentStyle === 'svgColor') {
+                                                                                                                                                                                                img.classList.add('icon-svg-color');
+                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                        let step = 0;
+                                                                                                                                                                                                            const tryNext = () => {
+                                                                                                                                                                                                                    if (step < sources.length) img.src = sources[step++];
+                                                                                                                                                                                                                            else container.replaceChildren(makeLetterTile((site.name || 'P').trim().charAt(0).toUpperCase() || 'P', site.name, false));
+                                                                                                                                                                                                                                };
+                                                                                                                                                                                                                                    img.addEventListener('error', tryNext);
+                                                                                                                                                                                                                                        img.addEventListener('load', () => { if (img.naturalWidth && img.naturalWidth < 20 && step < sources.length) tryNext(); });
+                                                                                                                                                                                                                                            container.appendChild(img);
+                                                                                                                                                                                                                                                tryNext();
+                                                                                                                                                                                                                            }
 function makeLetterTile(text, name, isEmoji) {
     const tile = document.createElement('div');
     tile.className = 'icon-tile' + (isEmoji ? ' is-emoji' : '');
@@ -1602,3 +1632,89 @@ function registerServiceWorker() {
     if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
     navigator.serviceWorker.register('sw.js').catch(() => { /* sem offline, mas o site funciona */ });
 }
+/* =====================================================================
+   INTEGRAÇÃO COM SHARE TARGET (PWA)
+   ===================================================================== */
+function checkIncomingShare() {
+    const params = new URLSearchParams(window.location.search);
+    const sharedUrl = params.get('share_url') || params.get('share_text');
+    const sharedTitle = params.get('share_title');
+
+    if (sharedUrl) {
+        // Extrai URL válida se o texto vier junto com a URL
+        const match = sharedUrl.match(/https?:\/\/[^\s]+/);
+        const finalUrl = match ? match[0] : sharedUrl;
+        
+        // Limpa a barra do navegador para não reabrir no F5
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        // Abre o modal de inclusão com os dados preenchidos
+         if (typeof openCreateModal === 'function') {
+            openCreateModal({
+                url: finalUrl,
+                name: sharedTitle || ''
+            });
+        }
+    }
+}
+
+// Dispara uma única vez ao carregar a página
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkIncomingShare);
+} else {
+    checkIncomingShare();
+}
+/* =====================================================================
+   NOTIFICAÇÃO E PROMPT DE INSTALAÇÃO PWA
+   ===================================================================== */
+function initPwaInstallBanner() {
+    if (IS_EXTENSION || isStandalone()) return;
+
+    const banner = $('pwa-install-banner');
+    const installBtn = $('pwa-banner-install-btn');
+    const closeBtn = $('pwa-banner-close-btn');
+
+    if (!banner || !installBtn) return;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+
+        setTimeout(() => {
+            banner.classList.remove('hidden');
+            setTimeout(() => banner.classList.add('show'), 50);
+        }, 1500);
+    });
+
+    installBtn.addEventListener('click', async () => {
+        if (!deferredInstallPrompt) return;
+
+        banner.classList.remove('show');
+        setTimeout(() => banner.classList.add('hidden'), 400);
+
+        try {
+            deferredInstallPrompt.prompt();
+            const { outcome } = await deferredInstallPrompt.userChoice;
+            if (outcome === 'accepted') {
+                showToast(tr('instalado') || 'Aplicativo instalado com sucesso!');
+            }
+        } catch (err) {
+            /* ignora cancelamentos */
+        }
+        deferredInstallPrompt = null;
+    });
+
+    closeBtn?.addEventListener('click', () => {
+        banner.classList.remove('show');
+        setTimeout(() => banner.classList.add('hidden'), 400);
+    });
+}
+
+// Inicialização segura do Banner PWA
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPwaInstallBanner);
+} else {
+    initPwaInstallBanner();
+}
+
+ 

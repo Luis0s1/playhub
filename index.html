@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#0f172a">
-    <meta name="description" content="PlayHub: A central hub for links to apps, games, movies, AI, and tools.">
+    <meta name="description" content="PlayHub: central de links de apps, jogos, filmes, IAs e ferramentas.">
     <title>PlayHub - Central de Apps &amp; Jogos</title>
 
     <link rel="manifest" href="manifest.json">
@@ -92,7 +92,7 @@
             "sites.js",
             "i18n.js",
             "script.js",
-            "gerar_icones.py",
+            "gerar_icons.py",
             "sites.js",
             "sites/ai.js", 
             "sites/apps.js", 
@@ -263,7 +263,7 @@
     </script>
 
     <script src="icons-catalog.js"></script>
-    <script src="background.js"></script>
+    <script src="boot.js"></script>
 </head>
 <body class="system-mode">
 
@@ -318,7 +318,7 @@
             </button>
 
             <button id="btn-open-create" class="nav-btn nav-btn-add" type="button">
-                <span class="icon" aria-hidden="true" data-icon="criar">+</span>
+                <span class="icon" aria-hidden="true" data-icon="criar">➕</span>
                 <span class="nav-label" data-i18n="criar_botao">Criar Link</span>
             </button>
 
@@ -369,7 +369,7 @@
             <div id="normal-header-actions" class="header-actions">
                 <button id="btn-search-open" class="icon-btn mobile-only" type="button" data-i18n-aria="pesquisar" aria-label="Pesquisar" data-icon="busca">🔎</button>
                 <button id="btn-install-top" class="btn-theme-pill install-btn hidden" type="button">
-                    <span aria-hidden="true">📥</span> <span data-i18n="instalar_app">Instalar app</span>
+                    <span aria-hidden="true">⬇️</span> <span data-i18n="instalar_app">Instalar app</span>
                 </button>
                 <select id="lang-selector" class="btn-theme-pill" data-i18n-aria="idioma" aria-label="Idioma">
                     <option value="pt-BR">Português (BR)</option>
@@ -642,15 +642,32 @@
     <script src="sites/design.js"></script>
     <script src="sites/dev.js"></script>
     <script src="sites/games.js"></script>
-    <script src="sites/filmes-&-series.js"></script> <!-- Lembre-se de renomear o arquivo sem espaço/acento -->
-    <script src="sites/others.js"></script>
-    <script src="sites/productivity.js"></script>
+    <script src="sites/filmes-e-series.js"></script> <!-- Lembre-se de renomear o arquivo sem espaço/acento -->
+    <script src="sites/outros.js"></script>
+    <script src="sites/produtividade.js"></script>
     <script src="sites/video.js"></script>
 
     <!-- ============ SCRIPTS PRINCIPAIS DO SISTEMA ============ -->
     <script src="sites.js"></script>
     <script src="i18n.js"></script>
     <script src="script.js"></script>
+        <!-- Banner de Notificação de Instalação do PlayHub -->
+    <div id="pwa-install-banner" class="pwa-banner hidden" role="dialog" aria-live="polite">
+      <div class="pwa-banner-content">
+        <div class="pwa-banner-icon">⚡</div>
+        <div class="pwa-banner-text">
+          <strong>Instale o PlayHub</strong>
+          <p>Baixe o aplicativo para acesso rápido e offline no seu dispositivo!</p>
+        </div>
+        <div class="pwa-banner-actions">
+          <button id="pwa-banner-install-btn" class="pwa-btn-primary">Instalar</button>
+          <button id="pwa-banner-close-btn" class="pwa-btn-close" aria-label="Fechar">&times;</button>
+        </div>
+      </div>
+    </div>
+
     <script src="bubble.js" defer></script>
 </body>
-</html>
+    </html>
+ 
+ 
