@@ -64,7 +64,7 @@ playhub/
 ├── manifest.json           # Web App Manifest for PWA & Extension configuration
 ├── background.js          # Background service worker script for extension features
 ├── sw.js                  # PWA offline cache Service Worker
-├── icons/icons-site/            # Local high-resolution WebP and PNG icon assets
+├── icons-site/            # Local high-resolution WebP and PNG icon assets
 └── sites/                 # Modular dataset JS files by category:
     ├── ai.js              # Artificial Intelligence tools & chatbots
     ├── apps.js            # Web applications & utility tools
@@ -72,7 +72,7 @@ playhub/
     ├── design.js          # Vector, UI & graphic editing suites
     ├── dev.js             # Developer resources, APIs & repositories
     ├── games.js            # Browser & retro emulation games
-    ├── filmes-e-series.js # Movies, series & video streaming links
-    ├── outros.js           # Miscellaneous platforms & custom tools
-    ├── produtividade.js   # Project management & task trackers
+    ├── movies-&-series.js # Movies, series & video streaming links
+    ├── others.js           # Miscellaneous platforms & custom tools
+    ├── productivity.js   # Project management & task trackers
     └── video.js           # Video editors & media platforms
