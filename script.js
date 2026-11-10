@@ -1709,38 +1709,4 @@ if (document.readyState === 'loading') {
 } else {
     checkIncomingShare();
     initPwaInstallBanner();
-}en');
-            setTimeout(() => banner.classList.add('show'), 50);
-        }, 1500);
-    });
-
-    installBtn.addEventListener('click', async () => {
-        if (!deferredInstallPrompt) return;
-
-        banner.classList.remove('show');
-        setTimeout(() => banner.classList.add('hidden'), 400);
-
-        try {
-            deferredInstallPrompt.prompt();
-            const { outcome } = await deferredInstallPrompt.userChoice;
-            if (outcome === 'accepted') {
-                showToast(tr('instalado') || 'Aplicativo instalado com sucesso!');
-            }
-        } catch (err) {
-            /* ignora cancelamentos */
-        }
-        deferredInstallPrompt = null;
-    });
-
-    closeBtn?.addEventListener('click', () => {
-        banner.classList.remove('show');
-        setTimeout(() => banner.classList.add('hidden'), 400);
-    });
-}
-
-// Inicialização segura do Banner PWA
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initPwaInstallBanner);
-} else {
-    initPwaInstallBanner();
 }
