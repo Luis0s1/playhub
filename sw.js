@@ -2,7 +2,7 @@
    PlayHub - Service Worker (PWA & Suporte Offline)
    ===================================================================== */
 
-const CACHE_NAME = 'playhub-v2';
+const CACHE_NAME = 'playhub-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',
