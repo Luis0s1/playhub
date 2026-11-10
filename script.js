@@ -1613,27 +1613,9 @@ function setupInstall() {
         deferredInstallPrompt = null; 
         updateInstallButtons();
         try {
-            promptEvent.prompt();
-            await promptEvent.userChoice;
-        } catch (e) { /* ignora */ }
-        closeEverything();
-    }));
-    updateInstallButtons();
-}
 
-function updateInstallButtons() {
-    const show = !IS_EXTENSION && !!deferredInstallPrompt && !isStandalone();
-    document.querySelectorAll('.install-btn').forEach(btn => btn.classList.toggle('hidden', !show));
-}
-
-function registerServiceWorker() {
-    if (IS_EXTENSION) return;
-    if (!('serviceWorker' in navigator)) return;
-    if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
-    navigator.serviceWorker.register('sw.js').catch(() => { /* sem offline, mas o site funciona */ });
-}
 /* =====================================================================
-   INTEGRAÇÃO COM SHARE TARGET (PWA)
+   INTEGRAÇÃO COM SHARE TARGET E BANNER PWA
    ===================================================================== */
 function checkIncomingShare() {
     const params = new URLSearchParams(window.location.search);
@@ -1641,21 +1623,68 @@ function checkIncomingShare() {
     const sharedTitle = params.get('share_title');
 
     if (sharedUrl) {
-        // Extrai URL válida se o texto vier junto com a URL
         const match = sharedUrl.match(/https?:\/\/[^\s]+/);
         const finalUrl = match ? match[0] : sharedUrl;
-        
-        // Limpa a barra do navegador para não reabrir no F5
         window.history.replaceState({}, document.title, window.location.pathname);
 
-        // Abre o modal de inclusão com os dados preenchidos
-         if (typeof openCreateModal === 'function') {
+        if (typeof openCreateModal === 'function') {
             openCreateModal({
                 url: finalUrl,
                 name: sharedTitle || ''
             });
         }
     }
+}
+
+function initPwaInstallBanner() {
+    if (IS_EXTENSION || isStandalone()) return;
+
+    const banner = $('pwa-install-banner');
+    const installBtn = $('pwa-banner-install-btn');
+    const closeBtn = $('pwa-banner-close-btn');
+
+    if (!banner || !installBtn) return;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+
+        setTimeout(() => {
+            banner.classList.remove('hidden');
+            setTimeout(() => banner.classList.add('show'), 50);
+        }, 1500);
+    });
+
+    installBtn.addEventListener('click', async () => {
+        if (!deferredInstallPrompt) return;
+
+        banner.classList.remove('show');
+        setTimeout(() => banner.classList.add('hidden'), 400);
+
+        try {
+            deferredInstallPrompt.prompt();
+            const { outcome } = await deferredInstallPrompt.userChoice;
+            if (outcome === 'accepted') {
+                showToast(tr('instalado') || 'Aplicativo instalado com sucesso!');
+            }
+        } catch (err) {}
+        deferredInstallPrompt = null;
+    });
+
+    closeBtn?.addEventListener('click', () => {
+        banner.classList.remove('show');
+        setTimeout(() => banner.classList.add('hidden'), 400);
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        checkIncomingShare();
+        initPwaInstallBanner();
+    });
+} else {
+    checkIncomingShare();
+    initPwaInstallBanner();
 }
 
 // Dispara uma única vez ao carregar a página
@@ -1716,5 +1745,3 @@ if (document.readyState === 'loading') {
 } else {
     initPwaInstallBanner();
 }
-
- 

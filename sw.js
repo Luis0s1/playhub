@@ -2,7 +2,7 @@
    PlayHub - Service Worker (PWA & Suporte Offline)
    ===================================================================== */
 
-const CACHE_NAME = 'playhub-v1';
+const CACHE_NAME = 'playhub-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -15,7 +15,6 @@ const STATIC_ASSETS = [
   './bubble.js'
 ];
 
-// Instalação do Service Worker e gravação do cache inicial
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -25,7 +24,6 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Limpeza de caches antigos
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -37,7 +35,6 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Estratégia de busca: Tenta a rede; se falhar/offline, entrega o cache
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
@@ -65,4 +62,3 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
- 

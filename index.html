@@ -268,11 +268,11 @@
 <body class="system-mode">
 
     <!-- ============ TELA DE CARREGAMENTO / RESILIÊNCIA ============ -->
-    <div id="loading-screen-overlay">
-        <div class="loader-card">
+    <div id="loading-screen-overlay" style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+        <div class="loader-card" style="background: var(--surface-solid, #1e293b); border-color: var(--border-color, rgba(255,255,255,0.1));">
             <div id="loader-spinner" class="spinner-loader"></div>
             <h2 class="loader-title">PlayHub</h2>
-            <p id="loader-status" class="loader-msg">Verificando arquivos e componentes do sistema...</p>
+            <p id="loader-status" class="loader-msg" data-i18n="carregando_sistema">Verificando arquivos e componentes do sistema...</p>
             <div id="loader-missing-box" class="missing-list" style="display: none;"></div>
             <div id="loader-actions" class="loader-btns" style="display: none;">
                 <button class="btn-loader btn-loader-main" onclick="window.open(OFFICIAL_SITE_URL, '_blank')">Abrir Site Oficial</button>
@@ -282,6 +282,22 @@
         </div>
     </div>
 
+    <!-- ============ BANNER ANIMADO DE INSTALAÇÃO PWA ============ -->
+    <div id="pwa-install-banner" class="pwa-banner hidden" role="dialog" aria-live="polite">
+      <div class="pwa-banner-content">
+        <div class="pwa-banner-icon">⚡</div>
+        <div class="pwa-banner-text">
+          <strong data-i18n="instalar_playhub">Instale o PlayHub</strong>
+          <p data-i18n="instalar_pwa_desc">Baixe o aplicativo para acesso rápido e suporte offline no seu computador ou celular!</p>
+        </div>
+        <div class="pwa-banner-actions">
+          <button id="pwa-banner-install-btn" class="pwa-btn-primary" data-i18n="instalar">Instalar</button>
+          <button id="pwa-banner-close-btn" class="pwa-btn-close" aria-label="Fechar">&times;</button>
+        </div>
+      </div>
+    </div>
+
+    
     <!-- ============ MODAL PARA ESCOLHER MODO DE ABERTURA ============ -->
     <div id="openSiteModal" class="open-modal">
         <div class="open-modal-content">
