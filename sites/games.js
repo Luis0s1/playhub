@@ -1636,7 +1636,91 @@ const GAMES_SITES = [
     "description": "Jogo de corrida eletrizante Gran Turismo 4.",
     "iconData": "",
     "origUrl": "https://granturismo4.online/"
-  }
+  },
+  {
+      "id": "c_mvwq86uw2tyk",
+      "name": "Mortal Kombat  9",
+      "url": "https://mk9.lauta.site/",
+      "category": "jogos",
+      "description": "",
+      "iconData": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1XRQkR-UflWwN7k6rVZlWp8J0eRolWo9fk25tOUmRyA&s=10"
+    },
+    {
+      "id": "c_mvwqa3u1rkzc",
+      "name": "Need for Speed Underground 2 Revived",
+      "url": "https://nfsu2.xyz",
+      "category": "jogos",
+      "description": "",
+      "iconData": ""
+    },
+    {
+      "id": "c_mw9p6nghtp4j",
+      "name": "Crashnitrokart",
+      "url": "https://crashnitrokart.gamingretro.online/",
+      "category": "jogos",
+      "description": "",
+      "iconData": ""
+    },
+    {
+      "id": "c_mw9p74uplj6r",
+      "name": "Fifa14wc",
+      "url": "https://fifa14wc.gamingretro.online/",
+      "category": "jogos",
+      "description": "",
+      "iconData": ""
+    },
+    {
+      "id": "c_mw9pd9ujo05a",
+      "name": "Fifastreet2012",
+      "url": "https://fifastreet2012.gamingretro.online/",
+      "category": "jogos",
+      "description": "",
+      "iconData": ""
+    },
+    {
+      "id": "c_mw9pfmk59qrz",
+      "name": "Resident Evil 4",
+      "url": "https://residentevil4.gamingretro.online/",
+      "category": "jogos",
+      "description": "Aventura épica e ação com Resident Evil 4.",
+      "iconData": "",
+      "origUrl": "https://residentevil4.online/"
+    },
+    {
+      "id": "c_mw9pgka1e3k0",
+      "name": "Nfsunderground2",
+      "url": "https://nfsunderground2.site/",
+      "category": "jogos",
+      "description": "",
+      "iconData": ""
+    },
+    {
+      "id": "c_mw9pk6wcjaui",
+      "name": "FIFA 11",
+      "url": "https://fifa11.gamingretro.online/",
+      "category": "jogos",
+      "description": "Jogo clássico de futebol FIFA 11 jogável diretamente no navegador.",
+      "iconData": "",
+      "origUrl": "https://fifa11.online/"
+    },
+    {
+      "id": "c_mwgmyo153fxl",
+      "name": "DRINK THE OCEAN",
+      "url": "https://MANA.GS",
+      "category": "jogos",
+      "description": "",
+      "iconData": "",
+      "origUrl": "MANA.GS"
+    },
+    {
+      "id": "c_mwi7b4azgnsf",
+      "name": "Wow aethus",
+      "url": "https://wow.aethus.pl/",
+      "category": "jogos",
+      "description": "",
+      "iconData": "",
+      "origUrl": "https://wow.aethus.pl/"
+    }
 ];
 
  
