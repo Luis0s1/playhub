@@ -98,12 +98,39 @@ const DEV_SITES = [
     "iconData": "",
     "opensource": true
   },
-  {
-    "id": "c_mvvonpmw1iz2",
-    "name": "Github",
-    "url": "https://github.com",
-    "category": "dev",
-    "description": "Plataforma de hospedagem e gestão de repositórios Git.",
-    "iconData": ""
-  }
+    {
+      "id": "c_mvvonpmw1iz2",
+      "name": "Github",
+      "url": "https://github.com",
+      "category": "dev",
+      "description": "Plataforma de hospedagem e gestão de repositórios Git.",
+      "iconData": ""
+    },
+    {
+      "id": "c_mwfo721nwbkh",
+      "name": "Codeandchill",
+      "url": "https://codeandchill.store/",
+      "category": "dev",
+      "description": "",
+      "iconData": "",
+      "origUrl": "https://codeandchill.store/"
+    },
+    {
+      "id": "c_mwgouelg47u3",
+      "name": "Originkit",
+      "url": "https://www.originkit.dev",
+      "category": "dev",
+      "description": "",
+      "iconData": "",
+      "origUrl": "https://www.originkit.dev"
+    },
+    {
+      "id": "c_mwgtemez2dah",
+      "name": "Prompt Motion",
+      "url": "https://prompt-motion.com",
+      "category": "dev",
+      "description": "",
+      "iconData": "",
+      "origUrl": "prompt-motion.com"
+    }
 ];
