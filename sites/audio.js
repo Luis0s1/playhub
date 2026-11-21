@@ -5,9 +5,10 @@ const AUDIO_SITES = [
     "domain": "voicestudio.sh",
     "category": "audio",
     "price": "free",
-    "description": "❗️ElevenLabs de código aberto free \nFerramenta de audio online.",
-    "tags": [],
-    "iconData": ""
+    "description": "❗️ElevenLabs de código aberto free\nClonagem de voz, síntese e dublagem local por IA.",
+    "tags": ["Clonagem de Voz", "IA"],
+    "iconData": "",
+    "opensource": true
   },
   {
     "name": "Audacity",
@@ -16,7 +17,7 @@ const AUDIO_SITES = [
     "category": "audio",
     "price": "free",
     "description": "Gravador e editor de áudio multipista profissional.",
-    "tags": ["Audacity", "Áudio", "Edição", "Gravador"],
+    "tags": ["Áudio", "Edição", "Gravador"],
     "iconData": "",
     "opensource": true
   },
@@ -36,7 +37,7 @@ const AUDIO_SITES = [
     "domain": "lmms.io",
     "category": "audio",
     "price": "free",
-    "description": "Criação de música e batidas eletrônicas.",
+    "description": "Estação de produção musical e criação de batidas eletrônicas.",
     "tags": ["Música", "Beats"],
     "iconData": "",
     "opensource": true
@@ -47,8 +48,8 @@ const AUDIO_SITES = [
     "domain": "github.com",
     "category": "audio",
     "price": "free",
-    "description": "Ferramenta de audio online.",
-    "tags": [],
+    "description": "App open-source de ditado por voz e transcrição local privada.",
+    "tags": ["Transcrição", "Voz para Texto"],
     "iconData": "",
     "opensource": true
   },
@@ -58,8 +59,8 @@ const AUDIO_SITES = [
     "domain": "ardour.org",
     "category": "audio",
     "price": "free",
-    "description": "Ferramenta de audio online.",
-    "tags": [],
+    "description": "Estação de trabalho de áudio digital (DAW) para gravação e mixagem.",
+    "tags": ["DAW", "Mixagem"],
     "iconData": "",
     "opensource": true
   }

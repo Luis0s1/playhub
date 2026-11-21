@@ -55,7 +55,7 @@ const AI_SITES = [
     "domain": "lmarena.ai",
     "category": "ia",
     "price": "free",
-    "description": "Plataforma de comparação e testes cego entre IAs.",
+    "description": "Plataforma de comparação e testes cegos entre IAs.",
     "tags": ["LLMs", "Benchmarking"],
     "iconData": ""
   },
@@ -97,8 +97,8 @@ const AI_SITES = [
     "domain": "github.com",
     "category": "ia",
     "price": "free",
-    "description": "Ferramenta de ia online.",
-    "tags": [],
+    "description": "Gerador open-source de imagens e conteúdo visual por IA.",
+    "tags": ["Imagens", "Open Source"],
     "iconData": "",
     "opensource": true
   },
@@ -108,8 +108,8 @@ const AI_SITES = [
     "domain": "github.com",
     "category": "ia",
     "price": "free",
-    "description": "Ferramenta de ia online.",
-    "tags": [],
+    "description": "Modelo de linguagem e raciocínio aberto da MiniMax.",
+    "tags": ["LLM", "Open Source"],
     "iconData": "",
     "opensource": true
   },
@@ -119,8 +119,8 @@ const AI_SITES = [
     "domain": "github.com",
     "category": "ia",
     "price": "free",
-    "description": "Ferramenta de ia online.",
-    "tags": [],
+    "description": "Framework open-source para criar agentes e assistentes IA.",
+    "tags": ["Agentes", "Open Source"],
     "iconData": "",
     "opensource": true
   },
@@ -130,8 +130,8 @@ const AI_SITES = [
     "domain": "hermes-agent.nousresearch.com",
     "category": "ia",
     "price": "free",
-    "description": "Ferramenta de ia online.",
-    "tags": [],
+    "description": "Agente autônomo de IA da Nous Research para tarefas complexas.",
+    "tags": ["Agentes", "Automação"],
     "iconData": "",
     "opensource": true
   },
@@ -141,8 +141,8 @@ const AI_SITES = [
     "domain": "paperclip.ing",
     "category": "ia",
     "price": "free",
-    "description": "Ferramenta de ia online.",
-    "tags": [],
+    "description": "Assistente de IA focado em organização, notas e automação.",
+    "tags": ["Assistente", "Notas"],
     "iconData": "",
     "opensource": true
   },
@@ -152,8 +152,8 @@ const AI_SITES = [
     "domain": "github.com",
     "category": "ia",
     "price": "free",
-    "description": "Ferramenta de ia online.",
-    "tags": [],
+    "description": "Ferramenta open-source de assistência e automação com IA.",
+    "tags": ["Automação", "Open Source"],
     "iconData": "",
     "opensource": true
   },
@@ -163,8 +163,8 @@ const AI_SITES = [
     "domain": "morphic.sh",
     "category": "ia",
     "price": "free",
-    "description": "Ferramenta de ia online.",
-    "tags": [],
+    "description": "Buscador inteligente open-source com respostas geradas por IA.",
+    "tags": ["Busca", "Open Source"],
     "iconData": "",
     "opensource": true
   }

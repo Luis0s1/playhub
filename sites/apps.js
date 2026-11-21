@@ -35,8 +35,8 @@ const APPS_SITES = [
     "domain": "gratos.app",
     "category": "aplicativos",
     "price": "free",
-    "description": "Plataforma de aplicativos e serviços web gratuitos.",
-    "tags": ["Apps", "Serviços"],
+    "description": "Diretório de alternativas gratuitas e open-source a softwares pagos.",
+    "tags": ["Apps", "Alternativas"],
     "iconData": ""
   },
   {

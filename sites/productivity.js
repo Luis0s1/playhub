@@ -17,7 +17,7 @@ const PRODUTIVIDADE_SITES = [
     "category": "produtividade",
     "price": "free",
     "description": "Gerenciador seguro de senhas com criptografia de ponta a ponta.",
-    "tags": ["Bitwarden", "Senhas", "Segurança", "Criptografia"],
+    "tags": ["Senhas", "Segurança", "Criptografia"],
     "iconData": "",
     "opensource": true
   },
@@ -49,7 +49,7 @@ const PRODUTIVIDADE_SITES = [
     "category": "produtividade",
     "price": "free",
     "description": "Ferramenta local e completa para editar, juntar e converter arquivos PDF.",
-    "tags": ["Stirling PDF"],
+    "tags": ["PDF", "Conversor"],
     "iconData": "",
     "opensource": true
   },
@@ -59,8 +59,8 @@ const PRODUTIVIDADE_SITES = [
     "domain": "github.com",
     "category": "produtividade",
     "price": "free",
-    "description": "Ferramenta de produtividade online.",
-    "tags": [],
+    "description": "Assistente open-source de transcrição e resumos de reuniões com IA local.",
+    "tags": ["Reuniões", "Transcrição"],
     "iconData": "",
     "opensource": true
   },
@@ -71,7 +71,7 @@ const PRODUTIVIDADE_SITES = [
     "category": "produtividade",
     "price": "free",
     "description": "Gerenciador de projetos open-source moderno e ágil.",
-    "tags": [],
+    "tags": ["Projetos", "Jira Alt"],
     "iconData": "",
     "opensource": true
   },
@@ -81,8 +81,8 @@ const PRODUTIVIDADE_SITES = [
     "domain": "heyform.net",
     "category": "produtividade",
     "price": "free",
-    "description": "Ferramenta de produtividade online.",
-    "tags": [],
+    "description": "Criador open-source de formulários e pesquisas interativas.",
+    "tags": ["Formulários", "Pesquisas"],
     "iconData": "",
     "opensource": true
   },
@@ -93,7 +93,7 @@ const PRODUTIVIDADE_SITES = [
     "category": "produtividade",
     "price": "free",
     "description": "CRM moderno e flexível de código aberto.",
-    "tags": [],
+    "tags": ["CRM", "Vendas"],
     "iconData": "",
     "opensource": true
   },
@@ -103,8 +103,8 @@ const PRODUTIVIDADE_SITES = [
     "domain": "github.com",
     "category": "produtividade",
     "price": "free",
-    "description": "Ferramenta de produtividade online.",
-    "tags": [],
+    "description": "Edição comunitária open-source do Cal.com para agendamentos.",
+    "tags": ["Agenda", "Self-Hosted"],
     "iconData": "",
     "opensource": true
   },
@@ -114,8 +114,8 @@ const PRODUTIVIDADE_SITES = [
     "domain": "frappe.io",
     "category": "produtividade",
     "price": "free",
-    "description": "Ferramenta de produtividade online.",
-    "tags": [],
+    "description": "Sistema ERP completo e open-source para gestão empresarial.",
+    "tags": ["ERP", "Gestão"],
     "iconData": "",
     "opensource": true
   },
@@ -125,9 +125,10 @@ const PRODUTIVIDADE_SITES = [
     "domain": "anarlog.so",
     "category": "produtividade",
     "price": "free",
-    "description": "Ferramenta de produtividade online.",
-    "tags": [],
-    "iconData": ""
+    "description": "Bloco de notas de reuniões com IA local sem bots na chamada.",
+    "tags": ["Notas", "Reuniões"],
+    "iconData": "",
+    "opensource": true
   },
   {
     "name": "Harper",
@@ -135,9 +136,10 @@ const PRODUTIVIDADE_SITES = [
     "domain": "writewithharper.com",
     "category": "produtividade",
     "price": "free",
-    "description": "Ferramenta de produtividade online.",
-    "tags": [],
-    "iconData": ""
+    "description": "Corretor gramatical rápido, privado e offline alternativo ao Grammarly.",
+    "tags": ["Escrita", "Gramática"],
+    "iconData": "",
+    "opensource": true
   },
   {
     "name": "Kan",
@@ -145,9 +147,10 @@ const PRODUTIVIDADE_SITES = [
     "domain": "kan.bn",
     "category": "produtividade",
     "price": "free",
-    "description": "Ferramenta de produtividade online.",
-    "tags": [],
-    "iconData": ""
+    "description": "Quadro Kanban de código aberto alternativo ao Trello.",
+    "tags": ["Kanban", "Trello Alt"],
+    "iconData": "",
+    "opensource": true
   },
   {
     "name": "LibreOffice",
@@ -156,7 +159,7 @@ const PRODUTIVIDADE_SITES = [
     "category": "produtividade",
     "price": "free",
     "description": "Suíte de escritório completa alternativa ao Microsoft Office.",
-    "tags": ["LibreOffice"],
+    "tags": ["Documentos", "Planilhas"],
     "iconData": "",
     "opensource": true
   },
@@ -166,8 +169,8 @@ const PRODUTIVIDADE_SITES = [
     "domain": "mattermost.com",
     "category": "produtividade",
     "price": "free",
-    "description": "Ferramenta de produtividade online.",
-    "tags": [],
+    "description": "Plataforma open-source de mensagens e colaboração para equipes.",
+    "tags": ["Chat", "Slack Alt"],
     "iconData": "",
     "opensource": true
   }

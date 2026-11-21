@@ -5,9 +5,10 @@ const DESIGN_SITES = [
     "domain": "getartcraft.com",
     "category": "design",
     "price": "free",
-    "description": "❗️Photoshop de código aberto free \nFerramenta de design online.",
-    "tags": [],
-    "iconData": ""
+    "description": "❗️Photoshop de código aberto free\nEditor de imagens open-source para desktop e navegador.",
+    "tags": ["Edição", "Camadas"],
+    "iconData": "",
+    "opensource": true
   },
   {
     "name": "VectorCraft",
@@ -15,9 +16,10 @@ const DESIGN_SITES = [
     "domain": "getartcraft.com",
     "category": "design",
     "price": "free",
-    "description": "❗️Illustrator de código aberto free \nFerramenta de design online.",
-    "tags": [],
-    "iconData": ""
+    "description": "❗️Illustrator de código aberto free\nEditor de ilustração vetorial rápido escrito em Rust.",
+    "tags": ["Vetor", "Ilustração"],
+    "iconData": "",
+    "opensource": true
   },
   {
     "name": "LightCraft",
@@ -25,9 +27,10 @@ const DESIGN_SITES = [
     "domain": "getartcraft.com",
     "category": "design",
     "price": "free",
-    "description": "❗️Lightroom de código aberto free \nFerramenta de design online.",
-    "tags": [],
-    "iconData": ""
+    "description": "❗️Lightroom de código aberto free\nRevelador RAW e gerenciador de biblioteca de fotos.",
+    "tags": ["RAW", "Fotografia"],
+    "iconData": "",
+    "opensource": true
   },
   {
     "name": "Pixlr",
@@ -35,7 +38,7 @@ const DESIGN_SITES = [
     "domain": "pixlr.com",
     "category": "design",
     "price": "freemium",
-    "description": "Editor de fotos online com IA e ferramentas de remoção de fundo.",
+    "description": "Editor de fotos online com IA e remoção de fundo.",
     "tags": ["Filtros IA", "Edição Web"],
     "iconData": ""
   },
@@ -56,7 +59,7 @@ const DESIGN_SITES = [
     "category": "design",
     "price": "free",
     "description": "Lousa virtual colaborativa estilo rascunho feito à mão.",
-    "tags": ["Excalidraw"],
+    "tags": ["Diagramas", "Lousa"],
     "iconData": "",
     "opensource": true
   },
@@ -67,7 +70,7 @@ const DESIGN_SITES = [
     "category": "design",
     "price": "free",
     "description": "Editor de imagem avançado e manipulação fotográfica gratuita.",
-    "tags": ["GIMP", "Edição", "Photoshop Alt", "Camadas"],
+    "tags": ["Edição", "Photoshop Alt", "Camadas"],
     "iconData": "",
     "opensource": true
   },
@@ -77,7 +80,7 @@ const DESIGN_SITES = [
     "domain": "inkscape.org",
     "category": "design",
     "price": "free",
-    "description": "Editor de gráficos vetoriais no formato SVG.",
+    "description": "Editor profissional de gráficos vetoriais no formato SVG.",
     "tags": ["Vetor", "SVG"],
     "iconData": "",
     "opensource": true
@@ -89,7 +92,7 @@ const DESIGN_SITES = [
     "category": "design",
     "price": "free",
     "description": "Programa de pintura digital e ilustração profissional de código aberto.",
-    "tags": ["Krita"],
+    "tags": ["Pintura Digital", "Ilustração"],
     "iconData": "",
     "opensource": true
   },
@@ -99,8 +102,8 @@ const DESIGN_SITES = [
     "domain": "penpot.app",
     "category": "design",
     "price": "free",
-    "description": "Ferramenta de design de interfaces e prototipagem estilo Figma.",
-    "tags": ["Penpot"],
+    "description": "Ferramenta open-source de design de interfaces e prototipagem.",
+    "tags": ["UI/UX", "Figma Alt"],
     "iconData": "",
     "opensource": true
   },
@@ -110,18 +113,19 @@ const DESIGN_SITES = [
     "domain": "open-design.ai",
     "category": "design",
     "price": "free",
-    "description": "Ferramenta de design online.",
-    "tags": [],
-    "iconData": ""
+    "description": "Workspace colaborativo open-source de design e protótipos com IA.",
+    "tags": ["UI/UX", "IA"],
+    "iconData": "",
+    "opensource": true
   },
   {
     "name": "Plasmic",
     "url": "https://plasmic.app",
     "domain": "plasmic.app",
     "category": "design",
-    "price": "free",
-    "description": "Ferramenta de design online.",
-    "tags": [],
+    "price": "freemium",
+    "description": "Construtor visual de interfaces e páginas integrado a código React.",
+    "tags": ["No-Code", "UI Builder"],
     "iconData": ""
   },
   {
@@ -130,8 +134,8 @@ const DESIGN_SITES = [
     "domain": "github.com",
     "category": "design",
     "price": "free",
-    "description": "Ferramenta de design online.",
-    "tags": [],
+    "description": "Editor gráfico online de código aberto estilo Canva.",
+    "tags": ["Artes", "Canva Alt"],
     "iconData": "",
     "opensource": true
   },
@@ -142,7 +146,7 @@ const DESIGN_SITES = [
     "category": "design",
     "price": "free",
     "description": "Suíte profissional de criação 3D, animação, modelagem e renderização.",
-    "tags": ["Blender", "3D", "Modelagem", "VFX"],
+    "tags": ["3D", "Modelagem", "VFX"],
     "iconData": "",
     "opensource": true
   },
@@ -152,8 +156,8 @@ const DESIGN_SITES = [
     "domain": "darktable.org",
     "category": "design",
     "price": "free",
-    "description": "Ferramenta de design online.",
-    "tags": [],
+    "description": "Software open-source de fotografia e revelação não destrutiva de RAW.",
+    "tags": ["RAW", "Fotografia"],
     "iconData": "",
     "opensource": true
   },
@@ -163,8 +167,8 @@ const DESIGN_SITES = [
     "domain": "rawtherapee.com",
     "category": "design",
     "price": "free",
-    "description": "Ferramenta de design online.",
-    "tags": [],
+    "description": "Processador avançado de imagens RAW e ajuste fino de cores.",
+    "tags": ["RAW", "Fotografia"],
     "iconData": "",
     "opensource": true
   },
@@ -174,26 +178,29 @@ const DESIGN_SITES = [
     "domain": "reactbits.dev",
     "category": "design",
     "price": "free",
-    "description": "Ferramenta ou recurso de design e desenvolvimento Reactbits.",
-    "tags": ["design", "ferramenta"],
-    "iconData": ""
+    "description": "Biblioteca de componentes React animados e interativos para web.",
+    "tags": ["React", "Componentes"],
+    "iconData": "",
+    "opensource": true
   },
   {
     "name": "SKILLRY",
-    "url": "https://SKILLRY.DEV",
-    "domain": "SKILLRY.DEV",
+    "url": "https://skillry.dev",
+    "domain": "skillry.dev",
     "category": "design",
     "price": "free",
-    "description": "Ferramenta ou recurso de design e desenvolvimento SKILLRY.",
-    "tags": ["design", "ferramenta"],
+    "description": "Coleção de recursos, componentes e ferramentas para design e dev.",
+    "tags": ["UI", "Recursos"],
     "iconData": ""
   },
   {
-    "id": "c_mvwqdolmax2c",
     "name": "Is Agentic",
     "url": "https://is-agentic.com",
+    "domain": "is-agentic.com",
     "category": "design",
-    "description": "",
+    "price": "free",
+    "description": "Avaliador de compatibilidade e leitura de sites para agentes de IA.",
+    "tags": ["Auditoria", "Agentes IA"],
     "iconData": ""
   }
 ];

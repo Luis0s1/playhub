@@ -6,7 +6,7 @@ const SERVER_SITES = [
     "category": "servidor",
     "price": "free",
     "description": "Plataforma open-source para deploy de aplicações e contêineres Docker.",
-    "tags": ["Dokploy"],
+    "tags": ["Deploy", "Docker"],
     "iconData": "",
     "opensource": true
   },
@@ -49,8 +49,8 @@ const SERVER_SITES = [
     "domain": "plausible.io",
     "category": "servidor",
     "price": "free",
-    "description": "Ferramenta de servidor online.",
-    "tags": [],
+    "description": "Analytics web leve, open-source e focado em privacidade.",
+    "tags": ["Analytics", "Privacidade"],
     "iconData": "",
     "opensource": true
   },
@@ -61,7 +61,7 @@ const SERVER_SITES = [
     "category": "servidor",
     "price": "free",
     "description": "Plataforma de automação de fluxos de trabalho e integrações de API.",
-    "tags": [],
+    "tags": ["Automação", "Workflows"],
     "iconData": "",
     "opensource": true
   },
@@ -71,8 +71,8 @@ const SERVER_SITES = [
     "domain": "github.com",
     "category": "servidor",
     "price": "free",
-    "description": "Ferramenta de servidor online.",
-    "tags": [],
+    "description": "Plataforma open-source auto-hospedada de e-mails transacionais e campanhas.",
+    "tags": ["E-mail", "SMTP"],
     "iconData": "",
     "opensource": true
   },
@@ -82,8 +82,8 @@ const SERVER_SITES = [
     "domain": "linkstack.org",
     "category": "servidor",
     "price": "free",
-    "description": "Ferramenta de servidor online.",
-    "tags": [],
+    "description": "Alternativa open-source e auto-hospedável ao Linktree.",
+    "tags": ["Links", "Perfil"],
     "iconData": "",
     "opensource": true
   },
@@ -94,7 +94,7 @@ const SERVER_SITES = [
     "category": "servidor",
     "price": "free",
     "description": "Nuvem privada e armazenamento de arquivos auto-hospedado.",
-    "tags": [],
+    "tags": ["Nuvem", "Arquivos"],
     "iconData": "",
     "opensource": true
   },
@@ -104,8 +104,8 @@ const SERVER_SITES = [
     "domain": "syncthing.net",
     "category": "servidor",
     "price": "free",
-    "description": "Ferramenta de servidor online.",
-    "tags": [],
+    "description": "Sincronização contínua e descentralizada de arquivos entre dispositivos.",
+    "tags": ["Sincronização", "P2P"],
     "iconData": "",
     "opensource": true
   },
@@ -115,8 +115,8 @@ const SERVER_SITES = [
     "domain": "github.com",
     "category": "servidor",
     "price": "free",
-    "description": "Ferramenta de servidor online.",
-    "tags": [],
+    "description": "Ferramenta auto-hospedada de monitoramento de status e disponibilidade.",
+    "tags": ["Monitoramento", "Status"],
     "iconData": "",
     "opensource": true
   }

@@ -5,8 +5,8 @@ const FILMES_E_SERIES_SITES = [
     "domain": "nuvio.tv",
     "category": "filmes",
     "price": "free",
-    "description": "Site de filmes e séries em TV, Celular, PC. \nMenos no navegador",
-    "tags": [],
+    "description": "Aplicativo de filmes e séries para TV, celular e PC.",
+    "tags": ["Filmes", "Séries"],
     "iconData": ""
   },
   {
@@ -15,7 +15,7 @@ const FILMES_E_SERIES_SITES = [
     "domain": "hurawatch.vip",
     "category": "filmes",
     "price": "free",
-    "description": "Site para assistir filmes e séries online.",
+    "description": "Catálogo online para assistir filmes e séries sob demanda.",
     "tags": ["Filmes", "Séries"],
     "iconData": ""
   },
@@ -25,7 +25,7 @@ const FILMES_E_SERIES_SITES = [
     "domain": "pluto.tv",
     "category": "filmes",
     "price": "free",
-    "description": "Streaming gratuito com canais ao vivo e sob demanda.",
+    "description": "Streaming gratuito com canais ao vivo e filmes sob demanda.",
     "tags": ["Ao Vivo", "Grátis"],
     "iconData": ""
   },
@@ -35,7 +35,7 @@ const FILMES_E_SERIES_SITES = [
     "domain": "primeshows.org",
     "category": "filmes",
     "price": "free",
-    "description": "Catálogo de séries e programas de TV.",
+    "description": "Catálogo de séries e programas de TV em streaming.",
     "tags": ["Séries", "Streaming"],
     "iconData": ""
   },
@@ -45,7 +45,7 @@ const FILMES_E_SERIES_SITES = [
     "domain": "solarmovieru.com",
     "category": "filmes",
     "price": "free",
-    "description": "Plataforma de streaming de filmes e séries.",
+    "description": "Plataforma de streaming de filmes e lançamentos.",
     "tags": ["Cinema", "Lançamentos"],
     "iconData": ""
   },
@@ -65,7 +65,7 @@ const FILMES_E_SERIES_SITES = [
     "domain": "vioox.vc",
     "category": "filmes",
     "price": "free",
-    "description": "Assistir filmes e lançamentos online.",
+    "description": "Plataforma para assistir filmes e lançamentos em HD.",
     "tags": ["Streaming", "HD"],
     "iconData": ""
   },
@@ -75,7 +75,7 @@ const FILMES_E_SERIES_SITES = [
     "domain": "watchseries.bar",
     "category": "filmes",
     "price": "free",
-    "description": "Séries de TV e episódios completos.",
+    "description": "Catálogo de séries de TV e episódios completos.",
     "tags": ["Episódios", "Séries"],
     "iconData": ""
   }

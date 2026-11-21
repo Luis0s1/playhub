@@ -17,7 +17,7 @@ const DEV_SITES = [
     "category": "dev",
     "price": "free",
     "description": "Plataforma de desenvolvimento low-code para criar ferramentas internas.",
-    "tags": ["Budibase"],
+    "tags": ["Low-Code", "Painéis"],
     "iconData": "",
     "opensource": true
   },
@@ -28,7 +28,7 @@ const DEV_SITES = [
     "category": "dev",
     "price": "free",
     "description": "Motor potente e leve para criação de jogos 2D e 3D.",
-    "tags": ["Godot Engine"],
+    "tags": ["Game Engine", "2D/3D"],
     "iconData": "",
     "opensource": true
   },
@@ -39,7 +39,7 @@ const DEV_SITES = [
     "category": "dev",
     "price": "free",
     "description": "Backend open-source alternativo ao Firebase com banco Postgres.",
-    "tags": ["Supabase"],
+    "tags": ["Postgres", "Backend"],
     "iconData": "",
     "opensource": true
   },
@@ -49,8 +49,8 @@ const DEV_SITES = [
     "domain": "casdoor.ai",
     "category": "dev",
     "price": "free",
-    "description": "Ferramenta de dev online.",
-    "tags": [],
+    "description": "Plataforma open-source de autenticação, SSO e gestão de identidade.",
+    "tags": ["Auth", "SSO"],
     "iconData": "",
     "opensource": true
   },
@@ -61,7 +61,7 @@ const DEV_SITES = [
     "category": "dev",
     "price": "free",
     "description": "Backend de arquivo único em Go com banco de dados em tempo real.",
-    "tags": [],
+    "tags": ["Backend", "SQLite"],
     "iconData": "",
     "opensource": true
   },
@@ -71,8 +71,8 @@ const DEV_SITES = [
     "domain": "opencode.ai",
     "category": "dev",
     "price": "free",
-    "description": "Ferramenta de dev online.",
-    "tags": [],
+    "description": "Agente de programação open-source com IA diretamente no terminal.",
+    "tags": ["CLI", "Código IA"],
     "iconData": "",
     "opensource": true
   },
@@ -82,8 +82,8 @@ const DEV_SITES = [
     "domain": "maxun.dev",
     "category": "dev",
     "price": "free",
-    "description": "Ferramenta de dev online.",
-    "tags": [],
+    "description": "Plataforma open-source sem código para web scraping e extração de dados.",
+    "tags": ["Scraping", "API"],
     "iconData": "",
     "opensource": true
   },
@@ -93,44 +93,49 @@ const DEV_SITES = [
     "domain": "metabase.com",
     "category": "dev",
     "price": "free",
-    "description": "Ferramenta de dev online.",
-    "tags": [],
+    "description": "Ferramenta open-source de Business Intelligence e dashboards de dados.",
+    "tags": ["BI", "Analytics"],
     "iconData": "",
     "opensource": true
   },
-    {
-      "id": "c_mvvonpmw1iz2",
-      "name": "Github",
-      "url": "https://github.com",
-      "category": "dev",
-      "description": "Plataforma de hospedagem e gestão de repositórios Git.",
-      "iconData": ""
-    },
-    {
-      "id": "c_mwfo721nwbkh",
-      "name": "Codeandchill",
-      "url": "https://codeandchill.store/",
-      "category": "dev",
-      "description": "",
-      "iconData": "",
-      "origUrl": "https://codeandchill.store/"
-    },
-    {
-      "id": "c_mwgouelg47u3",
-      "name": "Originkit",
-      "url": "https://www.originkit.dev",
-      "category": "dev",
-      "description": "",
-      "iconData": "",
-      "origUrl": "https://www.originkit.dev"
-    },
-    {
-      "id": "c_mwgtemez2dah",
-      "name": "Prompt Motion",
-      "url": "https://prompt-motion.com",
-      "category": "dev",
-      "description": "",
-      "iconData": "",
-      "origUrl": "prompt-motion.com"
-    }
+  {
+    "name": "GitHub",
+    "url": "https://github.com",
+    "domain": "github.com",
+    "category": "dev",
+    "price": "freemium",
+    "description": "Plataforma de hospedagem e gestão de repositórios Git.",
+    "tags": ["Git", "Repositórios"],
+    "iconData": ""
+  },
+  {
+    "name": "Codeandchill",
+    "url": "https://codeandchill.store/",
+    "domain": "codeandchill.store",
+    "category": "dev",
+    "price": "pago",
+    "description": "Catálogo de templates e componentes animados em HTML, CSS e JS.",
+    "tags": ["Templates", "UI"],
+    "iconData": ""
+  },
+  {
+    "name": "Originkit",
+    "url": "https://www.originkit.dev",
+    "domain": "originkit.dev",
+    "category": "dev",
+    "price": "free",
+    "description": "Biblioteca gratuita de componentes animados e seções para sites.",
+    "tags": ["Componentes", "Animação"],
+    "iconData": ""
+  },
+  {
+    "name": "Prompt Motion",
+    "url": "https://prompt-motion.com",
+    "domain": "prompt-motion.com",
+    "category": "dev",
+    "price": "free",
+    "description": "Galeria de prompts e templates para gerar motion graphics com IA.",
+    "tags": ["Motion", "Prompts"],
+    "iconData": ""
+  }
 ];

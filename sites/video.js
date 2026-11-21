@@ -6,7 +6,7 @@ const VIDEO_SITES = [
     "category": "video",
     "price": "free",
     "description": "Reprodutor de mídia universal para múltiplos formatos de vídeo e áudio.",
-    "tags": ["VLC"],
+    "tags": ["Player", "Codecs"],
     "iconData": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-o1upE4Q7RkxCAhrAriZK6-HkkkpSgshB9XeZ9Gv-KA&s=10",
     "opensource": true
   },
@@ -27,9 +27,10 @@ const VIDEO_SITES = [
     "domain": "getartcraft.com",
     "category": "video",
     "price": "free",
-    "description": "❗️After Effects de código aberto free\nFerramenta de video online.",
-    "tags": [],
-    "iconData": ""
+    "description": "❗️After Effects de código aberto free\nFerramenta de motion graphics e efeitos visuais em Rust.",
+    "tags": ["Motion Graphics", "VFX"],
+    "iconData": "",
+    "opensource": true
   },
   {
     "name": "FilmCraft",
@@ -37,9 +38,10 @@ const VIDEO_SITES = [
     "domain": "getartcraft.com",
     "category": "video",
     "price": "free",
-    "description": "❗️Premiere de código aberto free\nFerramenta de video online.",
-    "tags": [],
-    "iconData": ""
+    "description": "❗️Premiere de código aberto free\nEditor de vídeo profissional open-source escrito em Rust.",
+    "tags": ["Edição", "Timeline"],
+    "iconData": "",
+    "opensource": true
   },
   {
     "name": "Snapzy",
@@ -47,9 +49,10 @@ const VIDEO_SITES = [
     "domain": "snapzy.app",
     "category": "video",
     "price": "free",
-    "description": "❗️CleanShot X de código aberto free \nFerramenta de video online.",
-    "tags": [],
-    "iconData": ""
+    "description": "❗️CleanShot X de código aberto free\nCaptura de tela, gravação e anotações nativas para macOS.",
+    "tags": ["Gravação", "Screenshot"],
+    "iconData": "",
+    "opensource": true
   },
   {
     "name": "CapCut Web",
@@ -78,7 +81,7 @@ const VIDEO_SITES = [
     "category": "video",
     "price": "free",
     "description": "Alternativa open-source ao Loom para gravação de tela.",
-    "tags": ["Gravação", "Loom Alternative"],
+    "tags": ["Gravação", "Loom Alt"],
     "iconData": "",
     "opensource": true
   },
@@ -111,7 +114,7 @@ const VIDEO_SITES = [
     "category": "video",
     "price": "free",
     "description": "O mais popular software de gravação de tela e streaming ao vivo.",
-    "tags": ["OBS Studio", "Live", "Gravação", "Streaming"],
+    "tags": ["Live", "Gravação", "Streaming"],
     "iconData": "",
     "opensource": true
   },
@@ -132,8 +135,8 @@ const VIDEO_SITES = [
     "domain": "openshot.org",
     "category": "video",
     "price": "free",
-    "description": "Ferramenta de video online.",
-    "tags": [],
+    "description": "Editor de vídeo open-source simples e multiplataforma.",
+    "tags": ["Edição", "Multiplataforma"],
     "iconData": "",
     "opensource": true
   },
@@ -143,8 +146,8 @@ const VIDEO_SITES = [
     "domain": "olivevideoeditor.org",
     "category": "video",
     "price": "free",
-    "description": "Ferramenta de video online.",
-    "tags": [],
+    "description": "Editor de vídeo não-linear open-source focado em desempenho.",
+    "tags": ["Edição", "Open Source"],
     "iconData": "",
     "opensource": true
   },
@@ -154,29 +157,30 @@ const VIDEO_SITES = [
     "domain": "natrongithub.github.io",
     "category": "video",
     "price": "free",
-    "description": "Ferramenta de video online.",
-    "tags": [],
+    "description": "Software open-source de composição digital e efeitos visuais (VFX).",
+    "tags": ["VFX", "Composição"],
     "iconData": "",
     "opensource": true
   },
   {
-    "name": "Sikip cut",
+    "name": "SkipCut",
     "url": "https://skipcut.com",
     "domain": "skipcut.com",
     "category": "video",
     "price": "free",
-    "description": "YouTube sem anúncios",
-    "tags": ["video"],
+    "description": "Reprodutor web para assistir vídeos do YouTube sem anúncios.",
+    "tags": ["YouTube", "Sem Anúncios"],
     "iconData": ""
   },
   {
-    "name": "Poketube",
+    "name": "PokeTube",
     "url": "https://poketube.fun/home",
     "domain": "poketube.fun",
     "category": "video",
     "price": "free",
-    "description": "YouTube sem anúncios",
-    "tags": ["video"],
-    "iconData": ""
+    "description": "Frontend alternativo e privado do YouTube sem rastreamento ou anúncios.",
+    "tags": ["YouTube", "Privacidade"],
+    "iconData": "",
+    "opensource": true
   }
 ];
