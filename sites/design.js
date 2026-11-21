@@ -195,13 +195,5 @@ const DESIGN_SITES = [
     "category": "design",
     "description": "",
     "iconData": ""
-  },
-  {
-      "id": "c_mvwqdolmax2c",
-      "name": "Is Agentic",
-      "url": "https://is-agentic.com",
-      "category": "design",
-      "description": "",
-      "iconData": ""
   }
 ];
