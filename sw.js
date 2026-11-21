@@ -6,7 +6,7 @@
 const CORE_CACHE_NAME = 'playhub-core-v0.9.00';
 
 // 2. Versão dos Arquivos de Dados da pasta sites/
-const SITES_CACHE_NAME = 'playhub-sites-v0.9.00';
+const SITES_CACHE_NAME = 'playhub-sites-v0.9.01';
 
 // Ficheiros Principais da Raiz
 const CORE_ASSETS = [
