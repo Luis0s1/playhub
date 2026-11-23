@@ -1710,3 +1710,74 @@ if (document.readyState === 'loading') {
     checkIncomingShare();
     initPwaInstallBanner();
 }
+/* =====================================================================
+   MOTOR DE RENDERIZAÇÃO DOS ÍCONES E SVGs DO SISTEMA (icons-catalog.js)
+   ===================================================================== */
+function applySystemIcons() {
+    if (typeof PLAYHUB_ICONS_CATALOG === 'undefined') return;
+    const style = prefs.iconStyle || 'svgColor';
+
+    document.querySelectorAll('[data-icon]').forEach(el => {
+        const key = el.getAttribute('data-icon');
+        const entry = PLAYHUB_ICONS_CATALOG[key];
+        if (!entry) return;
+
+        // Salva o emoji original caso ainda não tenha sido salvo
+        if (!el.dataset.origEmoji) {
+            el.dataset.origEmoji = el.textContent.trim() || entry.emoji || '🌐';
+        }
+
+        if (style === 'emoji') {
+            el.textContent = entry.emoji || el.dataset.origEmoji;
+            return;
+        }
+
+        if (style === 'svgSimple' && entry.svgSimple) {
+            el.innerHTML = entry.svgSimple;
+            return;
+        }
+
+        if (style === 'svgColor' && entry.svgColor) {
+            el.innerHTML = entry.svgColor;
+            return;
+        }
+
+        if (style === 'image' && entry.file) {
+            const img = document.createElement('img');
+            img.src = encodeURI(entry.file);
+            img.alt = entry.label || key;
+            img.style.cssText = 'width:20px;height:20px;object-fit:contain;vertical-align:middle;';
+            // Se a imagem .webp não existir na pasta, cai automaticamente para o SVG Colorido ou Emoji
+            img.onerror = () => {
+                if (entry.svgColor) el.innerHTML = entry.svgColor;
+                else if (entry.svgSimple) el.innerHTML = entry.svgSimple;
+                else el.textContent = entry.emoji || el.dataset.origEmoji;
+            };
+            el.innerHTML = '';
+            el.appendChild(img);
+            return;
+        }
+
+        // Fallback padrão se o estilo escolhido não existir para aquele ícone
+        if (entry.svgColor) el.innerHTML = entry.svgColor;
+        else if (entry.svgSimple) el.innerHTML = entry.svgSimple;
+        else el.textContent = entry.emoji || el.dataset.origEmoji;
+    });
+}
+
+// Sobrescreve changeIconStyle para atualizar tanto os botões quanto os cards
+window.changeIconStyle = function(style) {
+    prefs.iconStyle = style || 'svgColor';
+    persistPrefs();
+    applySystemIcons();
+    renderPage();
+};
+
+// Garante que os SVGs sejam aplicados assim que a página carregar e ao abrir ajustes
+document.addEventListener('DOMContentLoaded', () => {
+    // Se o usuário ainda não escolheu um estilo, inicia em SVG Colorido para os SVGs já aparecerem
+    if (!safeStorageGet(KEYS.prefs, null)?.iconStyle) {
+        prefs.iconStyle = 'svgColor';
+    }
+    applySystemIcons();
+});
