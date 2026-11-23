@@ -3,7 +3,7 @@
    ===================================================================== */
 
 // 1. Versão do Core do Site (index, CSS, script principal, manifest)
-const CORE_CACHE_NAME = 'playhub-core-v0.9.00';
+const CORE_CACHE_NAME = 'playhub-core-v0.9.01';
 
 // 2. Versão dos Arquivos de Dados da pasta sites/
 const SITES_CACHE_NAME = 'playhub-sites-v0.9.01';
