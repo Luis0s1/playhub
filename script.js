@@ -272,6 +272,7 @@ function applyPreferences() {
     refreshDynamicLabels();
     updateSettingsUI();
     syncBubbleLabel();
+    if (typeof applySystemIcons === 'function') applySystemIcons();
 }
 
 function updateLayoutMode() {
@@ -379,6 +380,7 @@ function renderDynamicCategoryButtons() {
             const ic = document.createElement('span');
             ic.className = 'icon';
             ic.setAttribute('aria-hidden', 'true');
+            ic.setAttribute('data-icon', `cat_${cat}`);
             ic.textContent = icon;
             const label = document.createElement('span');
             label.className = 'nav-label';
@@ -399,6 +401,7 @@ function renderDynamicCategoryButtons() {
         }
     });
     syncActiveButtons();
+    if (typeof applySystemIcons === 'function') applySystemIcons();
 }
 
 function refreshDynamicLabels() {
@@ -448,17 +451,47 @@ function renderPage() {
     } else if (activeCategory !== 'todos') {
         baseSites = baseSites.filter(s => (s.category || 'outros') === activeCategory);
     }
-
     if (baseSites.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'empty-state';
+
         const ico = document.createElement('div');
         ico.className = 'empty-ico';
-        ico.textContent = activeCategory === 'favoritos' ? '⭐' : '🔎';
-        const msg = document.createElement('p');
-        msg.textContent = tr('sem_itens');
-        empty.append(ico, msg);
+        ico.setAttribute('data-icon', activeCategory === 'favoritos' ? 'favoritos' : (activeCategory === 'criados' ? 'criar' : 'busca'));
+        ico.textContent = activeCategory === 'favoritos' ? '⭐' : (activeCategory === 'criados' ? '➕' : '🔎');
+
+        const title = document.createElement('h3');
+        title.style.marginBottom = '8px';
+        title.textContent = activeCategory === 'criados'
+            ? tr('sem_criados_titulo')
+            : (activeCategory === 'favoritos' ? tr('sem_favs_titulo') : tr('sem_itens'));
+
+        empty.append(ico, title);
+
+        if (activeCategory === 'favoritos') {
+            const hint = document.createElement('p');
+            hint.style.cssText = 'max-width: 420px; margin: 0 auto 16px; font-size: 0.9rem; opacity: 0.85;';
+            hint.textContent = tr('sem_favs_dica');
+            empty.appendChild(hint);
+        }
+
+        if (activeCategory === 'criados' || activeCategory === 'favoritos') {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn-primary';
+            btn.style.marginTop = '12px';
+            if (activeCategory === 'criados') {
+                btn.textContent = `➕ ${tr('sem_criados_btn')}`;
+                btn.onclick = () => openCreateModal();
+            } else {
+                btn.textContent = `🏠 ${tr('sem_favs_btn')}`;
+                btn.onclick = () => selectCategory('todos');
+            }
+            empty.appendChild(btn);
+        }
+
         gridContainer.appendChild(empty);
+        if (typeof applySystemIcons === 'function') applySystemIcons();
         return;
     }
 
@@ -1714,17 +1747,23 @@ if (document.readyState === 'loading') {
    MOTOR DE RENDERIZAÇÃO DOS ÍCONES E SVGs DO SISTEMA (icons-catalog.js)
    ===================================================================== */
 function applySystemIcons() {
-    if (typeof PLAYHUB_ICONS_CATALOG === 'undefined') return;
-    const style = prefs.iconStyle || 'svgColor';
+    const catalog = window.PLAYHUB_ICONS_CATALOG || window.ICONS_CATALOG || window.iconsCatalog;
+    if (!catalog) return;
+
+    const style = (typeof prefs !== 'undefined' && prefs.iconStyle) ? prefs.iconStyle : 'image';
 
     document.querySelectorAll('[data-icon]').forEach(el => {
         const key = el.getAttribute('data-icon');
-        const entry = PLAYHUB_ICONS_CATALOG[key];
+        const entry = catalog[key];
         if (!entry) return;
 
-        // Salva o emoji original caso ainda não tenha sido salvo
         if (!el.dataset.origEmoji) {
             el.dataset.origEmoji = el.textContent.trim() || entry.emoji || '🌐';
+        }
+
+        if (entry.fixedImage && entry.file) {
+            renderSystemWebp(el, entry);
+            return;
         }
 
         if (style === 'emoji') {
@@ -1732,72 +1771,58 @@ function applySystemIcons() {
             return;
         }
 
-        if (style === 'svgSimple' && entry.svgSimple) {
-            el.innerHTML = entry.svgSimple;
+        if (style === 'svgSimple') {
+            el.innerHTML = entry.svgSimple || entry.svg || entry.svgColor || el.dataset.origEmoji;
             return;
         }
 
-        if (style === 'svgColor' && entry.svgColor) {
-            el.innerHTML = entry.svgColor;
+        if (style === 'svgColor') {
+            el.innerHTML = entry.svgColor || entry.svg || entry.svgSimple || el.dataset.origEmoji;
             return;
         }
 
-        if (style === 'image' && entry.file) {
-            const img = document.createElement('img');
-            img.src = encodeURI(entry.file);
-            img.alt = entry.label || key;
-            img.style.cssText = 'width:20px;height:20px;object-fit:contain;vertical-align:middle;';
-            // Se a imagem .webp não existir na pasta, cai automaticamente para o SVG Colorido ou Emoji
-            img.onerror = () => {
-                if (entry.svgColor) el.innerHTML = entry.svgColor;
-                else if (entry.svgSimple) el.innerHTML = entry.svgSimple;
-                else el.textContent = entry.emoji || el.dataset.origEmoji;
-            };
-            el.innerHTML = '';
-            el.appendChild(img);
-            return;
+        if (entry.file) {
+            renderSystemWebp(el, entry);
+        } else if (entry.svgColor || entry.svgSimple || entry.svg) {
+            el.innerHTML = entry.svgColor || entry.svgSimple || entry.svg;
+        } else {
+            el.textContent = entry.emoji || el.dataset.origEmoji;
         }
-
-        // Fallback padrão se o estilo escolhido não existir para aquele ícone
-        if (entry.svgColor) el.innerHTML = entry.svgColor;
-        else if (entry.svgSimple) el.innerHTML = entry.svgSimple;
-        else el.textContent = entry.emoji || el.dataset.origEmoji;
     });
 }
 
-// Sobrescreve changeIconStyle para atualizar tanto os botões quanto os cards
+function renderSystemWebp(el, entry) {
+    const img = document.createElement('img');
+    const cleanPath = entry.file.replace(/^\.?\//, '');
+    img.src = './' + cleanPath.split('/').map(part => encodeURIComponent(part)).join('/');
+    img.alt = entry.label || '';
+
+    if (el.getAttribute('data-icon') === 'logo_playhub') {
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;';
+    } else {
+        img.style.cssText = 'width:20px;height:20px;object-fit:contain;vertical-align:middle;display:inline-block;';
+    }
+
+    img.onerror = () => {
+        if (entry.fixedImage) return;
+        if (entry.svgColor) el.innerHTML = entry.svgColor;
+        else if (entry.svgSimple) el.innerHTML = entry.svgSimple;
+        else if (entry.svg) el.innerHTML = entry.svg;
+        else el.textContent = entry.emoji || el.dataset.origEmoji;
+    };
+    el.innerHTML = '';
+    el.appendChild(img);
+}
+
 window.changeIconStyle = function(style) {
-    prefs.iconStyle = style || 'svgColor';
+    prefs.iconStyle = style || 'image';
     persistPrefs();
     applySystemIcons();
     renderPage();
 };
 
-// Garante que os SVGs sejam aplicados assim que a página carregar e ao abrir ajustes
-document.addEventListener('DOMContentLoaded', () => {
-    // Se o usuário ainda não escolheu um estilo, inicia em SVG Colorido para os SVGs já aparecerem
-    if (!safeStorageGet(KEYS.prefs, null)?.iconStyle) {
-        prefs.iconStyle = 'svgColor';
-    }
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applySystemIcons);
+} else {
     applySystemIcons();
-});
-/* =====================================================================
-   TAMANHO E ALINHAMENTO DOS ÍCONES SVG NOS BOTÕES E BARRAS
-   ===================================================================== */
-[data-icon] svg {
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    vertical-align: middle;
-    flex-shrink: 0;
-}
-
-.bn-ico svg {
-    width: 22px;
-    height: 22px;
-}
-
-.icon-btn svg {
-    width: 19px;
-    height: 19px;
 }
