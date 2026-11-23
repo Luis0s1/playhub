@@ -17,185 +17,8 @@
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- ESTILOS DO SPLASH/LOADER E MODAL DE ABERTURA -->
-    <style>
-        #loading-screen-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: #0f172a; color: #f8fafc;
-            z-index: 999999; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
-            padding: 20px; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif;
-        }
-
-        .spinner-loader {
-            width: 45px; height: 45px;
-            border: 4px solid rgba(56, 189, 248, 0.2);
-            border-top: 4px solid #38bdf8;
-            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .loader-card {
-            background: rgba(30, 41, 59, 0.95); border: 1px solid #334155;
-            padding: 24px; border-radius: 16px; max-width: 460px; width: 100%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6); backdrop-filter: blur(10px);
-        }
-
-        .loader-title { color: #38bdf8; font-size: 20px; margin: 0 0 8px 0; }
-        .loader-msg { font-size: 13.5px; color: #94a3b8; margin-bottom: 14px; line-height: 1.5; }
-        .missing-list {
-            background: rgba(15, 23, 42, 0.8); color: #f43f5e;
-            padding: 10px; border-radius: 8px; font-family: monospace;
-            font-size: 12px; text-align: left; max-height: 100px; overflow-y: auto; margin-bottom: 16px;
-        }
-
-        .loader-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-        .btn-loader {
-            padding: 8px 14px; border-radius: 8px; border: none;
-            font-weight: 600; cursor: pointer; text-decoration: none; font-size: 12.5px;
-        }
-        .btn-loader-main { background: #38bdf8; color: #0f172a; }
-        .btn-loader-sec { background: #334155; color: #ffffff; }
-        .btn-loader-continue { background: transparent; color: #94a3b8; border: 1px solid #475569; }
-
-        /* Modal para Escolher Como Abrir o Link */
-        .open-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.7); z-index: 100000; justify-content: center; align-items: center;
-        }
-        .open-modal-content {
-            background: #1e293b; border: 1px solid #38bdf8; border-radius: 12px;
-            padding: 20px; text-align: center; max-width: 340px; width: 90%; color: #fff;
-        }
-
-        /* Foco Visual para Teclado (WASD / Setas) */
-        .card.keyboard-focused, .card:focus {
-            outline: 3px solid #38bdf8 !important; transform: scale(1.03); box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
-        }
-    </style>
-
-    <!-- SCRIPT DA LÓGICA DE VERIFICAÇÃO E IDIOMA -->
-    <script>
-        const LOCAL_INDEX_VERSION = "0.8.0";
-        const GITHUB_REPO_URL = "https://github.com/luis0s1/playhub";
-        const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/luis0s1/playhub/main/";
-        const OFFICIAL_SITE_URL = "https://luis0s1.github.io/playhub/";
-        const LINKTREE_LUIS0S1 = "https://linktr.ee/Luis0s1";
-        const ICON_PATH = "icons/icon.png";
-
-        const REQUIRED_FILES = [
-            "manifest.json",
-            "style.css",
-            "icons-catalog.js",
-            "background.js",
-            "sites.js",
-            "i18n.js",
-            "script.js",
-            "gerar_icons.py",
-            "sites.js",
-            "sites/ai.js", 
-            "sites/apps.js", 
-            "sites/audio.js", 
-            "sites/design.js", 
-            "sites/dev.js", 
-            "sites/games.js", 
-            "sites/movies-&-series.js", 
-            "sites/others.js", 
-            "sites/productivity.js", 
-            "sites/video.js"
-        ];
-
-        let missingFiles = [];
-        let targetUrlToOpen = "";
-
-        // Auto-detecção de Idioma
-        function detectLanguage() {
-            const userLang = navigator.language || navigator.userLanguage;
-            return userLang.startsWith('pt') ? 'pt-BR' : 'en';
-        }
-
-        // Verificação de Arquivos e Estrutura de Pastas
-        async function runSystemCheck() {
-            const statusMsg = document.getElementById('loader-status');
-            const missingBox = document.getElementById('loader-missing-box');
-            const actionBtns = document.getElementById('loader-actions');
-            const spinner = document.getElementById('loader-spinner');
-
-            missingFiles = [];
-
-            // Testa ícone da pasta local
-            try {
-                const iconRes = await fetch(`./${ICON_PATH}`);
-                if (!iconRes.ok) missingFiles.push("Pasta/arquivo: icons/icon.png");
-            } catch (e) {
-                missingFiles.push("Pasta/arquivo: icons/icon.png");
-            }
-
-            // Testa arquivos da raiz
-            for (const fileName of REQUIRED_FILES) {
-                try {
-                    const localRes = await fetch(`./${fileName}`);
-                    if (!localRes.ok) missingFiles.push(`Arquivo: ${fileName}`);
-                } catch (e) {
-                    missingFiles.push(`Arquivo: ${fileName}`);
-                }
-            }
-
-            // Se nada estiver faltando localmente, libera a página normalmente
-            if (missingFiles.length === 0) {
-                hideLoadingScreen();
-                return;
-            }
-
-            // Caso faltem arquivos JS, tenta buscar do GitHub RAW
-            if (statusMsg) statusMsg.innerText = `Buscando ${missingFiles.length} item(ns) pendente(s) da nuvem...`;
-
-            let downloadedCount = 0;
-            const missingScripts = missingFiles
-                .filter(item => item.startsWith("Arquivo: "))
-                .map(item => item.replace("Arquivo: ", ""))
-                .filter(file => file.endsWith(".js"));
-
-            for (const fileName of missingScripts) {
-                try {
-                    const remoteRes = await fetch(`${GITHUB_RAW_BASE}${encodeURIComponent(fileName)}`);
-                    if (remoteRes.ok) {
-                        const code = await remoteRes.text();
-                        const script = document.createElement('script');
-                        script.text = code;
-                        document.head.appendChild(script);
-                        downloadedCount++;
-                    }
-                } catch (err) {
-                    console.error(`[PlayHub] Erro ao buscar ${fileName} do GitHub.`, err);
-                }
-            }
-
-            // Se conseguiu baixar tudo ou parcialmente, oculta o loader após uma checagem rápida
-            if (downloadedCount > 0 && downloadedCount >= missingScripts.length) {
-                hideLoadingScreen();
-            } else {
-                if (spinner) spinner.style.display = 'none';
-                if (statusMsg) statusMsg.innerText = "Alguns arquivos locais não foram encontrados. Você pode abrir o site oficial ou continuar.";
-                if (missingBox) {
-                    missingBox.innerHTML = missingFiles.map(f => `<div>• ${f}</div>`).join('');
-                    missingBox.style.display = 'block';
-                }
-                if (actionBtns) actionBtns.style.display = 'flex';
-            }
-        }
-
-        function hideLoadingScreen() {
-            const screen = document.getElementById('loading-screen-overlay');
-            if (screen) {
-                screen.style.opacity = '0';
-                screen.style.transition = 'opacity 0.3s ease';
-                setTimeout(() => screen.style.display = 'none', 300);
-            }
-<!-- ESTILOS DE NOTIFICAÇÃO, MODAL DE ABERTURA E FOCO WASD -->
+    <!-- ESTILOS DE NOTIFICAÇÃO, MODAL DE ABERTURA E FOCO WASD -->
 <style>
-    /* Modal para Escolher Como Abrir o Link */
     .open-modal {
         display: none;
         position: fixed;
@@ -216,6 +39,16 @@
         color: #fff;
         box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
     }
+    .btn-loader {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 12.5px;
+    }
+    .btn-loader-main { background: #38bdf8; color: #0f172a; }
+    .btn-loader-sec { background: #334155; color: #ffffff; }
 
     /* Foco Visual para Teclado (WASD / Setas) */
     .site-card.keyboard-focused,
@@ -289,9 +122,6 @@
         return userLang.startsWith('pt') ? 'pt-BR' : 'en';
     }
 
-    /* =====================================================================
-       1. CHECAGEM DE ARQUIVOS EM 2º PLANO (1ª VEZ + A CADA 5 ENTRADAS)
-       ===================================================================== */
     async function runBackgroundSystemCheck() {
         const VISIT_KEY = "playhub_bg_check_count";
         let count = parseInt(localStorage.getItem(VISIT_KEY) || "0", 10);
@@ -340,9 +170,6 @@
         }
     }
 
-    /* =====================================================================
-       2. NOTIFICAÇÃO DE MODIFICAÇÃO / ATUALIZAÇÃO NO REPOSITÓRIO
-       ===================================================================== */
     async function checkRepoUpdates() {
         const SHA_KEY = "playhub_last_commit_sha";
         try {
@@ -381,9 +208,6 @@
         } catch (e) {}
     }
 
-    /* =====================================================================
-       3. NOTIFICAÇÃO FLUTUANTE
-       ===================================================================== */
     function showFloatingAlert({ title, message, actionLabel, onAction, onDismiss }) {
         const old = document.getElementById("playhub-bg-alert");
         if (old) old.remove();
@@ -413,9 +237,6 @@
         };
     }
 
-    /* =====================================================================
-       4. MODAL DE ESCOLHA DE ABERTURA (NESTA ABA / NOVA ABA)
-       ===================================================================== */
     function promptOpenSite(url) {
         targetUrlToOpen = url;
         const modal = document.getElementById('openSiteModal');
@@ -430,9 +251,6 @@
         else window.location.href = targetUrlToOpen;
     }
 
-    /* =====================================================================
-       5. NAVEGAÇÃO POR TECLADO (W, A, S, D / SETAS / ESPAÇO / ENTER)
-       ===================================================================== */
     let focusedIndex = -1;
     function initKeyboardNavigation() {
         document.addEventListener('keydown', (e) => {
@@ -441,7 +259,6 @@
             const cards = document.querySelectorAll('#grid-container .site-card');
             if (cards.length === 0) return;
 
-            // Calcula quantas colunas existem na linha atual automaticamente
             const cols = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--grid-cols')) || 6;
             const step = document.body.classList.contains('is-mobile') ? 2 : cols;
 
@@ -496,21 +313,6 @@
     <script src="boot.js"></script>
 </head>
 <body class="system-mode">
-
-    <!-- ============ TELA DE CARREGAMENTO / RESILIÊNCIA ============ -->
-    <div id="loading-screen-overlay" style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
-        <div class="loader-card" style="background: var(--surface-solid, #1e293b); border-color: var(--border-color, rgba(255,255,255,0.1));">
-            <div id="loader-spinner" class="spinner-loader"></div>
-            <h2 class="loader-title">PlayHub</h2>
-            <p id="loader-status" class="loader-msg" data-i18n="carregando_sistema">Verificando arquivos e componentes do sistema...</p>
-            <div id="loader-missing-box" class="missing-list" style="display: none;"></div>
-            <div id="loader-actions" class="loader-btns" style="display: none;">
-                <button class="btn-loader btn-loader-main" onclick="window.open(OFFICIAL_SITE_URL, '_blank')">Abrir Site Oficial</button>
-                <button class="btn-loader btn-loader-sec" onclick="window.open(GITHUB_REPO_URL, '_blank')">Abrir Repositório</button>
-                <button class="btn-loader btn-loader-continue" onclick="hideLoadingScreen()">Continuar Mesmo Assim</button>
-            </div>
-        </div>
-    </div>
 
     <!-- ============ BANNER ANIMADO DE INSTALAÇÃO PWA ============ -->
     <div id="pwa-install-banner" class="pwa-banner hidden" role="dialog" aria-live="polite">
