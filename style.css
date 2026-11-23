@@ -1134,5 +1134,99 @@ body:not(.no-blur) .glass {
     transform: translateY(140%);
   }
 }
+/* =====================================================================
+   OTIMIZAÇÃO DE PERFORMANCE + APPLE LIQUID GLASS (APENAS BARRAS E BOTÕES)
+   ===================================================================== */
 
- 
+/* 1. Tira o background-attachment: fixed que trava a rolagem no celular */
+body {
+    background-attachment: scroll !important;
+}
+
+/* 2. Remove blur pesado dos cards e do fundo de modais (60 FPS garantido) */
+.site-card,
+.site-card.glass,
+.backdrop {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    will-change: auto !important;
+}
+
+.site-card {
+    background: var(--surface-solid) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.backdrop {
+    background: rgba(2, 6, 23, 0.72) !important;
+}
+
+/* 3. Vidro Líquido da Apple Otimizado APENAS nas Barras (.header, .sidebar, .bottom-nav) */
+body:not(.no-blur) .header.glass,
+body:not(.no-blur) .sidebar.glass,
+body:not(.no-blur) .bottom-nav.glass {
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--surface-solid) 68%, rgba(255, 255, 255, 0.16)) 0%,
+        color-mix(in srgb, var(--surface-solid) 78%, transparent) 100%
+    ) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(175%) !important;
+    backdrop-filter: blur(14px) saturate(175%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.42),
+        0 8px 24px rgba(0, 0, 0, 0.32) !important;
+    will-change: auto !important;
+    transform: translateZ(0);
+}
+
+/* 4. Vidro Líquido da Apple nos Botões */
+.icon-btn,
+.btn-theme-pill,
+.btn-secondary,
+.btn-action,
+.nav-btn.active,
+.bn-btn.active,
+.cat-chip.active {
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.04) 50%,
+        rgba(255, 255, 255, 0.11) 100%
+    ) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(160%) !important;
+    backdrop-filter: blur(10px) saturate(160%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.24) !important;
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.45),
+        0 4px 12px rgba(0, 0, 0, 0.22) !important;
+}
+
+.icon-btn:hover,
+.btn-theme-pill:hover,
+.btn-secondary:hover,
+.btn-action:hover {
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.24) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.18) 100%
+    ) !important;
+    border-color: color-mix(in srgb, var(--accent-color) 65%, white) !important;
+}
+
+/* Ajuste de contraste do vidro no Tema Claro */
+body.light-mode .icon-btn,
+body.light-mode .btn-theme-pill,
+body.light-mode .btn-secondary,
+body.light-mode .btn-action {
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.85) 0%,
+        rgba(241, 245, 249, 0.65) 100%
+    ) !important;
+    border: 1px solid rgba(15, 23, 42, 0.14) !important;
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.95),
+        0 4px 12px rgba(15, 23, 42, 0.08) !important;
+}
