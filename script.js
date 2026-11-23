@@ -1781,3 +1781,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     applySystemIcons();
 });
+/* =====================================================================
+   TAMANHO E ALINHAMENTO DOS ÍCONES SVG NOS BOTÕES E BARRAS
+   ===================================================================== */
+[data-icon] svg {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.bn-ico svg {
+    width: 22px;
+    height: 22px;
+}
+
+.icon-btn svg {
+    width: 19px;
+    height: 19px;
+}
